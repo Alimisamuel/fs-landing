@@ -243,7 +243,7 @@ export default function Home() {
               </h3>
               <p className="text-white/90 mb-6 leading-relaxed">{message}</p>
               <p className="text-white/70 text-sm mb-6">
-                We'll keep you updated on our progress and let you know as soon
+                We&#39ll keep you updated on our progress and let you know as soon
                 as FaithStream launches!
               </p>
 
