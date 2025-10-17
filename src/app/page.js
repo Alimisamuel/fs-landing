@@ -34,7 +34,7 @@ export default function Home() {
     setMessage("");
 
     try {
-      const response = await fetch("https://fs.advancedtechnologypark.com/auth/waitlist/join", {
+      const response = await fetch("https://api.thefaithstream.com/auth/waitlist/join", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
