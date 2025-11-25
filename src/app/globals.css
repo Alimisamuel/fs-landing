@@ -1,7 +1,7 @@
-@import url("https://fonts.cdnfonts.com/css/satoshi");
-@import url("https://fonts.googleapis.com/css2?family=Baskervville:ital,wght@0,400..700;1,400..700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.cdnfonts.com/css/optima');
+@import url('https://fonts.cdnfonts.com/css/butler');
+
 
 @import "tailwindcss";
 
@@ -99,16 +99,39 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #000000;
   color: #fff;
- font-family: "satoshi", sans-serif;
+ font-family: "outfit", sans-serif;
   margin: 0%;
   padding: 0%;
 }
-
-h1,
-h2,
-h3 {
-  font-family: "Baskervville", serif;
+.optima{
+  font-family: 'optima';
+  font-weight: 900;
+}
+.butler{
+  font-family: 'butler';
   font-weight: 700;
+}
+
+.button {
+  cursor: pointer;
+  transition: all 0.3s ease !important;
+  position: relative;
+  overflow: hidden;
+
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .my-dashed {
