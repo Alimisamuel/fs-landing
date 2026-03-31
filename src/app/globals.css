@@ -351,6 +351,51 @@ backdrop-filter: blur(4.3px);
 
 /* Experience Card styling */
 
+/* SVG stroke gradient — cycles on card hover (ExperienceCard) */
+@keyframes experience-card-stroke-stop-a {
+  0%,
+  100% {
+    stop-color: #6ebde4;
+  }
+  33% {
+    stop-color: #e08fd3;
+  }
+  66% {
+    stop-color: #9dd8f0;
+  }
+}
+
+@keyframes experience-card-stroke-stop-b {
+  0%,
+  100% {
+    stop-color: #e08fd3;
+  }
+  33% {
+    stop-color: #6ebde4;
+  }
+  66% {
+    stop-color: #f5b8e8;
+  }
+}
+
+.group:hover .experience-card-stroke-stop-a,
+.group:focus-within .experience-card-stroke-stop-a {
+  animation: experience-card-stroke-stop-a 2.8s ease-in-out infinite;
+}
+
+.group:hover .experience-card-stroke-stop-b,
+.group:focus-within .experience-card-stroke-stop-b {
+  animation: experience-card-stroke-stop-b 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .experience-card-stroke-stop-a,
+  .group:hover .experience-card-stroke-stop-b,
+  .group:focus-within .experience-card-stroke-stop-a,
+  .group:focus-within .experience-card-stroke-stop-b {
+    animation: none;
+  }
+}
 
 .outer{
     width: 350px;

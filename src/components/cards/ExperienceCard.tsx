@@ -7,9 +7,9 @@ interface ContentCardProps {
   imageUrl: string;
 }
 
-/** Figma node 7063-6426: 385×300, 7.2px corner radius, top-right “bubble” cutout */
+/** 385×300 frame, 8px main corner radius, top-right “bubble” cutout */
 const CARD_PATH =
-  "M384.521 228.882C384.521 234.238 378.779 237.81 373.534 236.725C370.6 236.118 367.566 235.8 364.46 235.8C338.945 235.8 318.261 257.29 318.261 283.8C318.261 285.963 318.399 288.094 318.666 290.181C319.295 295.088 315.806 300 310.86 300H7.20002C3.22357 300 0 296.776 0 292.8V7.20001C0 3.22356 3.22355 0 7.2 0H377.32C381.297 0 384.521 3.22355 384.521 7.2V228.882Z";
+  "M384.521 228.882C384.521 234.238 378.779 237.81 373.534 236.725C370.6 236.118 367.566 235.8 364.46 235.8C338.945 235.8 318.261 257.29 318.261 283.8C318.261 285.963 318.399 288.094 318.666 290.181C319.295 295.088 315.806 300 310.86 300H8C3.58186 300 0 296.418 0 292V8C0 3.58173 3.58161 0 8 0H376.521C380.939 0 384.521 3.58161 384.521 8V228.882Z";
 
 const ExperienceCard = ({
   title,
@@ -21,7 +21,7 @@ const ExperienceCard = ({
   const gradientId = `experience-card-outline-${uid}`;
 
   return (
-    <article className="group relative mx-auto w-full max-w-[384.52px] overflow-visible">
+    <article className="group cursor-pointer relative mx-auto w-full max-w-[384.52px] overflow-visible">
       <svg className="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
         <defs>
           <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
@@ -81,8 +81,12 @@ const ExperienceCard = ({
               y2="300"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="#6EBDE4" />
-              <stop offset="1" stopColor="#E08FD3" />
+              <stop className="experience-card-stroke-stop-a" stopColor="#6EBDE4" />
+              <stop
+                className="experience-card-stroke-stop-b"
+                offset="1"
+                stopColor="#E08FD3"
+              />
             </linearGradient>
           </defs>
           <path
