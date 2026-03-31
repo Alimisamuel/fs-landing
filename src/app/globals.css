@@ -343,3 +343,63 @@ backdrop-filter: blur(4.3px);
 @keyframes l13{ 
   100%{transform: rotate(1turn)}
 }
+
+
+
+
+
+
+/* Experience Card styling */
+
+
+.outer{
+    width: 350px;
+    aspect-ratio: 1;
+    --w: 40px;
+    --h: 40px;
+    --outline: 8px;
+    --radius: 12px;
+    --offset: calc(-1 * var(--outline)); 
+    --size: calc(var(--radius) + var(--outline));
+    contain: layout;
+    background: 
+        calc(100% - var(--offset)) calc(100% - var(--h)) radial-gradient(circle at left top, transparent var(--radius), white var(--radius)),
+        calc(100% - var(--w)) calc( 100% - var(--offset)) radial-gradient(circle at left top, transparent var(--radius), white var(--radius)),
+        linear-gradient(to top right, rgb(242, 255, 225) 20%, rgb(196, 255, 43));
+    background-repeat: no-repeat;
+    background-size: var(--size) var(--size), var(--size) var(--size), cover;
+    border-radius: var(--radius);
+    align-content: end;
+    .inner {
+        outline: var(--outline) solid black;
+        border-radius: 50px;
+        width: var(--w);
+        height: var(--h);
+        text-align: center;
+        line-height: var(--h);
+        margin-left: auto;
+        button {
+            all: unset;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+            color: transparent;
+            text-shadow: 0 0 0 black;
+            &:hover {
+                background-color: rgb(196, 255, 43);
+            }
+        }
+    }
+
+    section {
+        width: 80%;
+        position: absolute;
+        top: 10px;
+        left: 36px;
+        h1 { font-size: 1.3em; font-weight: 600; }
+        h2 { font-size: 1.2em; font-weight: 600; }
+        a { color: rgb(29, 139, 236); }
+    }
+    
+
+}

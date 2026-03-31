@@ -147,9 +147,9 @@ const SelectExperience = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black">
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
       <HomeHeader hideNav={true} />
-      <div className="relative h-screen flex justify-center items-center">
+      <div className="relative flex min-h-screen items-center justify-center">
         {slotSources.map((src, index) => {
           const slot = index as 0 | 1;
 
@@ -176,22 +176,23 @@ const SelectExperience = () => {
           );
         })}
 
-        <div className="absolute inset-0 bg-black/45" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
-        <div className="absolute inset-0 flex items-center justify-center px-4 py-24 md:px-10">
-          <div className="w-full max-w-7xl">
-            <div>
-              <h1 className="text-center text-[2.2rem] font-semibold md:text-[3.5rem]">
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,rgba(0,0,0,0)_42%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-black" />
+        <div className="absolute inset-0 flex items-center justify-center px-5 pb-14 pt-24 md:px-10 md:pb-16 md:pt-28">
+          <div className="w-full max-w-[1240px]">
+            <div className="mx-auto max-w-3xl">
+              <h1 className="text-center text-[2rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[2.5rem] md:text-[3.6rem]">
                 Choose your experience
               </h1>
-              <p className="mt-3 text-center text-[#DCDCDC]">
-              FaithStream is a daily faith companion designed to support the
-              rhythm of
+              <p className="mx-auto mt-3 text-center text-sm leading-relaxed text-[#DCDCDC] sm:text-base md:mt-4 md:text-[1.06rem]">
+                FaithStream is a daily faith companion designed to support the
+                rhythm of
                 <br className="hidden md:block" /> everyday spiritual life.
               </p>
             </div>
 
-            <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
+            <div className="mx-auto mt-9 grid max-w-[820px] grid-cols-1 gap-7 sm:mt-10 sm:gap-8 md:mt-12 md:max-w-none md:grid-cols-2 md:gap-11">
               <ExperienceCard
                 description="When you need a moment with God, this is where you begin."
                 title="Encounter"
