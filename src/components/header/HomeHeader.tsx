@@ -32,6 +32,7 @@ import MobileSidebar from "./MobileSidebar";
 interface Props {
   window?: () => Window;
   children?: React.ReactElement<unknown>;
+  hideNav?:boolean
 }
 
 function HideOnScroll(props: Props) {
@@ -158,7 +159,7 @@ const HomeHeader = (props: Props) => {
             </Link>
 
             {/* Navigation Buttons */}
-            {!isMobile && (
+            {(!isMobile && !props.hideNav ) && (
               <div className="relative flex items-center ml-3">
                 {/* Left scroll button */}
                 {showScrollButton && canScrollLeft && (
