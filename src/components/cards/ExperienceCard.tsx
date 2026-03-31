@@ -1,8 +1,11 @@
 "use client";
 
-import { useId } from "react";
+import { useCallback, useId } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { Play } from "lucide-react";
+
+import { setSelectedExperience } from "@/lib/selectedExperience";
 
 interface ContentCardProps {
   title: string;
@@ -22,12 +25,18 @@ const ExperienceCard = ({
   imageUrl,
   entranceIndex = 0,
 }: ContentCardProps) => {
+  const router = useRouter();
   const uid = useId().replace(/:/g, "");
   const clipId = `experience-card-clip-${uid}`;
   const gradientId = `experience-card-outline-${uid}`;
   const reduceMotion = useReducedMotion();
   const baseDelay = entranceIndex * 0.15;
   const clipUrl = `url(#${clipId})`;
+
+  const handleSelectExperience = useCallback(() => {
+    setSelectedExperience(title);
+    router.push("/browse");
+  }, [router, title]);
   /** Duplicate on the scaling layer so cover+scale cannot paint past the border (WebKit + subpixel). */
   const clipStyle = {
     clipPath: clipUrl,
@@ -36,7 +45,17 @@ const ExperienceCard = ({
 
   return (
     <motion.article
+      role="button"
+      tabIndex={0}
+      aria-label={`Select ${title} experience`}
       className="group relative mx-auto w-full max-w-[384.52px] cursor-pointer overflow-visible [container-type:inline-size]"
+      onClick={handleSelectExperience}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handleSelectExperience();
+        }
+      }}
       initial={
         reduceMotion ? false : { opacity: 0, y: 52, scale: 0.92, rotate: -0.8 }
       }
@@ -215,6 +234,10 @@ const ExperienceCard = ({
         type="button"
         aria-label={`Play ${title}`}
         className="absolute bottom-[clamp(-0.5rem,-2.1cqw,-0.35rem)] right-0 z-20 flex size-[clamp(2.75rem,14.5cqw,3.5rem)] items-center justify-center rounded-full border border-white bg-[linear-gradient(165deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.06)_100%)] shadow-[0_10px_28px_rgba(0,0,0,0.45),0_0_0_1px_rgba(110,189,228,0.2)_inset] backdrop-blur-md transition-[filter,box-shadow] duration-300 hover:shadow-[0_14px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(224,143,211,0.25)_inset] active:scale-[0.98] group-hover:brightness-110"
+        onClick={(event) => {
+          event.stopPropagation();
+          handleSelectExperience();
+        }}
         initial={reduceMotion ? false : { opacity: 0, scale: 0.35, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         whileHover={reduceMotion ? undefined : { scale: 1.06 }}

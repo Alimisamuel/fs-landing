@@ -1,13 +1,8 @@
-import BrowsePage from '@/features/Browse'
-import ProtectedRoute from '@/routes/ProtectedRoute'
-import React from 'react'
+import BrowsePage from "@/features/Browse";
+import React from "react";
 
 const page = () => {
-  return (
-    <ProtectedRoute>
-   <BrowsePage/>
-    </ProtectedRoute>
-  )
-}
+  return <BrowsePage />;
+};
 
-export default page
+export default page;

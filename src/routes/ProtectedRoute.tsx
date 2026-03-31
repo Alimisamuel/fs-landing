@@ -4,15 +4,23 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsAuthenticated, selectAuthLoading } from '@/store/slices/authSlice';
-import { CircularProgress, Box } from '@mui/material';
 import GlobalLoading from '@/app/loading';
+import { getSelectedExperience } from '@/lib/selectedExperience';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   redirectTo?: string;
+  /** When set, authenticated users without a stored experience are sent to this path */
+  requireSelectedExperience?: boolean;
+  experienceRedirectTo?: string;
 }
 
-const ProtectedRoute = ({ children, redirectTo = '/auth/login' }: ProtectedRouteProps) => {
+const ProtectedRoute = ({
+  children,
+  redirectTo = '/auth/login',
+  requireSelectedExperience = false,
+  experienceRedirectTo = '/experience',
+}: ProtectedRouteProps) => {
   const router = useRouter();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const authLoading = useAppSelector(selectAuthLoading);
@@ -23,16 +31,34 @@ const ProtectedRoute = ({ children, redirectTo = '/auth/login' }: ProtectedRoute
   }, []);
 
   useEffect(() => {
-    if (mounted && !authLoading && !isAuthenticated) {
+    if (!mounted || authLoading) return;
+    if (!isAuthenticated) {
       router.push(redirectTo);
+      return;
     }
-  }, [isAuthenticated, authLoading, mounted, router, redirectTo]);
+    if (requireSelectedExperience && !getSelectedExperience()) {
+      router.push(experienceRedirectTo);
+    }
+  }, [
+    authLoading,
+    experienceRedirectTo,
+    isAuthenticated,
+    mounted,
+    redirectTo,
+    requireSelectedExperience,
+    router,
+  ]);
 
-  // Show loading while checking authentication
-  if (!mounted || authLoading || (!isAuthenticated && mounted)) {
-    return (
-    <GlobalLoading/>
-    );
+  const waitingForAuth =
+    !mounted || authLoading || (!isAuthenticated && mounted);
+  const waitingForExperience =
+    isAuthenticated &&
+    mounted &&
+    requireSelectedExperience &&
+    !getSelectedExperience();
+
+  if (waitingForAuth || waitingForExperience) {
+    return <GlobalLoading />;
   }
 
   return isAuthenticated ? <>{children}</> : null;
