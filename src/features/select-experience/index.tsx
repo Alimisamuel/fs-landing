@@ -192,7 +192,7 @@ const SelectExperience = () => {
               </p>
             </div>
 
-            <div className="mx-auto mt-9 grid max-w-[820px] grid-cols-1 gap-7 sm:mt-10 sm:gap-8 md:mt-12 md:max-w-none md:grid-cols-2 md:gap-11">
+            <div className="mx-auto mt-9 grid max-w-[820px] grid-cols-1 gap-7 sm:mt-10 sm:gap-8 md:mt-12 md:max-w-none md:grid-cols-3 md:gap-11">
               <ExperienceCard
                 description="When you need a moment with God, this is where you begin."
                 title="Encounter"
@@ -201,6 +201,11 @@ const SelectExperience = () => {
               <ExperienceCard
                 description="Faith grows through learning, reflection, and daily spiritual practice."
                 title="Growth"
+                imageUrl="/images/movie7.png"
+              />
+              <ExperienceCard
+                description="FaithStream brings you films and series rooted in faith, hope, redemption, and purpose."
+                title="Entertainment "
                 imageUrl="/images/movie7.png"
               />
             </div>

@@ -39,20 +39,31 @@ const ExperienceCard = ({
             className="absolute inset-0 bg-[lightgray] bg-no-repeat transition-transform duration-500 ease-out group-hover:scale-[1.03]"
             style={{
               backgroundImage: `url(${imageUrl})`,
-              backgroundPosition: "0.213px -83.721px",
-              backgroundSize: "100% 128.173%",
+              backgroundPosition: "center",
+              backgroundSize: "cover",
+
             }}
           />
           <div className="absolute inset-0 bg-black/65" aria-hidden="true" />
-        </div>
-
-        <div className="absolute inset-x-0 bottom-0 z-10 p-5 pr-[5.5rem] md:p-6 md:pr-[6.25rem]">
-          <h3 className="font-serif text-[2rem] font-bold leading-none tracking-[-0.04em] text-white md:text-[3rem]">
-            {title}
-          </h3>
-          <p className="mt-3 max-w-[24rem] text-sm leading-[1.15] text-white/85 md:text-[1.05rem]">
-            {description}
-          </p>
+          <div className="relative z-10 flex h-full min-h-0 flex-col justify-end">
+            <div className="relative w-full min-w-0">
+              <div
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent backdrop-blur-sm md:backdrop-blur-xs"
+                aria-hidden="true"
+              />
+              <div className="relative z-10 p-5 pr-[5.5rem] md:px-6 md:pr-[6.25rem]">
+                <h3 className=" mb-2 font-serif text-[2rem] leading-0 font-bold tracking-[-0.04em] text-white md:text-[24px]">
+                  {title}
+                </h3>
+                <p
+                  className="!pt-5 max-w-[24rem] text-sm leading-[1.15] text-[#DCDCDC] line-clamp-2 break-words md:text-[14px]"
+                  title={description}
+                >
+                  {description}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <svg
@@ -78,7 +89,7 @@ const ExperienceCard = ({
             d={CARD_PATH}
             fill="none"
             stroke={`url(#${gradientId})`}
-            strokeWidth="2"
+            strokeWidth="3"
             strokeLinejoin="round"
             className="transition-all duration-500 [filter:drop-shadow(0_0_8px_rgba(110,189,228,0.35))] group-hover:[filter:drop-shadow(0_0_14px_rgba(224,143,211,0.45))]"
           />
@@ -88,7 +99,7 @@ const ExperienceCard = ({
       <button
         type="button"
         aria-label={`Play ${title}`}
-        className="absolute bottom-[-8px] right-0 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/35 bg-[linear-gradient(165deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.06)_100%)] shadow-[0_10px_28px_rgba(0,0,0,0.45),0_0_0_1px_rgba(110,189,228,0.2)_inset] backdrop-blur-md transition-[transform,filter,box-shadow] duration-300 hover:scale-[1.04] hover:shadow-[0_14px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(224,143,211,0.25)_inset] active:scale-[0.98] group-hover:brightness-110 md:bottom-[-8px] md:-right-[7px] md:h-14 md:w-14"
+        className="absolute bottom-[-8px] right-0 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white bg-[linear-gradient(165deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.06)_100%)] shadow-[0_10px_28px_rgba(0,0,0,0.45),0_0_0_1px_rgba(110,189,228,0.2)_inset] backdrop-blur-md transition-[transform,filter,box-shadow] duration-300 hover:scale-[1.04] hover:shadow-[0_14px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(224,143,211,0.25)_inset] active:scale-[0.98] group-hover:brightness-110 md:bottom-[-8px] md:-right-[7px] md:h-14 md:w-14"
       >
         <Play
           className="ml-0.5 h-[1.125rem] w-[1.125rem] fill-white text-white md:h-5 md:w-5"
