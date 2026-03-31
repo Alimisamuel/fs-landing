@@ -27,10 +27,16 @@ const ExperienceCard = ({
   const gradientId = `experience-card-outline-${uid}`;
   const reduceMotion = useReducedMotion();
   const baseDelay = entranceIndex * 0.15;
+  const clipUrl = `url(#${clipId})`;
+  /** Duplicate on the scaling layer so cover+scale cannot paint past the border (WebKit + subpixel). */
+  const clipStyle = {
+    clipPath: clipUrl,
+    WebkitClipPath: clipUrl,
+  } as const;
 
   return (
     <motion.article
-      className="group relative mx-auto w-full max-w-[384.52px] cursor-pointer overflow-visible"
+      className="group relative mx-auto w-full max-w-[384.52px] cursor-pointer overflow-visible [container-type:inline-size]"
       initial={
         reduceMotion ? false : { opacity: 0, y: 52, scale: 0.92, rotate: -0.8 }
       }
@@ -56,7 +62,7 @@ const ExperienceCard = ({
       </svg>
 
       <motion.div
-        className="relative mx-auto h-[300px] w-full max-w-[384.52px] transition-transform duration-500 ease-out group-hover:scale-[1.01]"
+        className="relative aspect-[385/300] w-full transition-transform duration-500 ease-out group-hover:scale-[1.01]"
         initial={
           reduceMotion ? false : { filter: "blur(14px) saturate(0.88)" }
         }
@@ -72,12 +78,13 @@ const ExperienceCard = ({
         }
       >
         <div
-          className="absolute inset-0"
-          style={{ clipPath: `url(#${clipId})` }}
+          className="absolute inset-0 isolate overflow-hidden"
+          style={clipStyle}
         >
           <div
-            className="absolute inset-0 bg-[lightgray] bg-no-repeat transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            className="absolute inset-0 origin-center bg-[lightgray] bg-no-repeat transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]"
             style={{
+              ...clipStyle,
               backgroundImage: `url(${imageUrl})`,
               backgroundPosition: "center",
               backgroundSize: "cover",
@@ -91,7 +98,7 @@ const ExperienceCard = ({
                 aria-hidden="true"
               />
               <motion.div
-                className="relative z-10 p-5 pr-[5.5rem] md:px-6 md:pr-[6.25rem]"
+                className="relative z-10 pt-[clamp(1rem,5.2cqw,1.5rem)] pb-[clamp(1rem,5.2cqw,1.5rem)] pl-[clamp(1rem,5.2cqw,1.5rem)] pr-[clamp(4.25rem,18.5cqw,6.25rem)]"
                 initial={reduceMotion ? "show" : "hidden"}
                 animate="show"
                 variants={{
@@ -105,7 +112,7 @@ const ExperienceCard = ({
                 }}
               >
                 <motion.h3
-                  className="mb-2 font-serif text-[2rem] font-bold leading-none tracking-[-0.04em] text-white md:text-[24px]"
+                  className="mb-[clamp(0.375rem,1.25cqw,0.5rem)] font-serif text-[clamp(1.25rem,6.2cqw,1.5rem)] font-bold leading-none tracking-[-0.04em] text-white"
                   variants={{
                     hidden: reduceMotion
                       ? { opacity: 1, y: 0, filter: "blur(0px)" }
@@ -126,7 +133,7 @@ const ExperienceCard = ({
                   {title}
                 </motion.h3>
                 <motion.p
-                  className="!pt-5 max-w-[24rem] text-sm leading-[1.15] text-[#DCDCDC] line-clamp-2 break-words md:text-[14px]"
+                  className="max-w-[24rem] pt-[clamp(0.85rem,3.2cqw,1.25rem)] text-[clamp(0.8125rem,3.8cqw,0.875rem)] leading-[1.15] text-[#DCDCDC] line-clamp-2 break-words"
                   title={description}
                   variants={{
                     hidden: reduceMotion
@@ -181,7 +188,6 @@ const ExperienceCard = ({
             stroke={`url(#${gradientId})`}
             strokeWidth="3"
             strokeLinejoin="round"
-            vectorEffect="non-scaling-stroke"
             initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
             transition={
@@ -208,7 +214,7 @@ const ExperienceCard = ({
       <motion.button
         type="button"
         aria-label={`Play ${title}`}
-        className="absolute bottom-[-8px] right-0 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white bg-[linear-gradient(165deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.06)_100%)] shadow-[0_10px_28px_rgba(0,0,0,0.45),0_0_0_1px_rgba(110,189,228,0.2)_inset] backdrop-blur-md transition-[filter,box-shadow] duration-300 hover:shadow-[0_14px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(224,143,211,0.25)_inset] active:scale-[0.98] group-hover:brightness-110 md:bottom-[-8px] md:-right-[7px] md:h-14 md:w-14"
+        className="absolute bottom-[clamp(-0.5rem,-2.1cqw,-0.35rem)] right-0 z-20 flex size-[clamp(2.75rem,14.5cqw,3.5rem)] items-center justify-center rounded-full border border-white bg-[linear-gradient(165deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.06)_100%)] shadow-[0_10px_28px_rgba(0,0,0,0.45),0_0_0_1px_rgba(110,189,228,0.2)_inset] backdrop-blur-md transition-[filter,box-shadow] duration-300 hover:shadow-[0_14px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(224,143,211,0.25)_inset] active:scale-[0.98] group-hover:brightness-110"
         initial={reduceMotion ? false : { opacity: 0, scale: 0.35, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         whileHover={reduceMotion ? undefined : { scale: 1.06 }}
@@ -225,7 +231,7 @@ const ExperienceCard = ({
         }
       >
         <Play
-          className="ml-0.5 h-[1.125rem] w-[1.125rem] fill-white text-white md:h-5 md:w-5"
+          className="ml-0.5 size-[clamp(1rem,5.2cqw,1.25rem)] fill-white text-white"
           strokeWidth={1.75}
         />
       </motion.button>
