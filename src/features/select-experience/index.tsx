@@ -34,6 +34,10 @@ const SelectExperience = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slotSources, setSlotSources] = useState<[string, string]>(["", ""]);
 
+  const {data:status} = useGetQuery([""], `/users/me/experience-group-status`)
+
+  console.log(status, "STATUS");
+
   useEffect(() => {
     const categories = data?.data?.data ?? [];
     const trailerPool = categories.flatMap((category) =>
