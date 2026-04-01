@@ -11,7 +11,10 @@ import { BannerData, ContentItem } from "@/services/bannerApi";
 import ExperienceCard from "@/components/cards/ExperienceCard";
 import { useSelectExperienceGroupMutation } from "@/hooks/useSelectExperienceGroupMutation";
 import type { ExperienceGroupStatusResponse } from "@/services/experienceGroup";
-import { EXPERIENCE_GROUP_STATUS_QUERY_KEY } from "@/services/experienceGroup";
+import {
+  EXPERIENCE_GROUP_STATUS_QUERY_KEY,
+  experienceGroupDisplayName,
+} from "@/services/experienceGroup";
 import { Button, Skeleton } from "@mui/material";
 import { GoArrowRight } from "react-icons/go";
 
@@ -42,6 +45,7 @@ const SelectExperience = () => {
     useSelectExperienceGroupMutation();
 
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const hasHydratedSelectionFromApi = useRef(false);
 
   const { data } = useGetQuery<ContentRes>(
     ["landing_movies"],
@@ -73,20 +77,14 @@ const SelectExperience = () => {
     );
 
   useEffect(() => {
-    if (
-      !experienceStatusReady ||
-      !isAuthenticated ||
-      !experienceStatus?.data?.selected
-    ) {
-      return;
+    if (hasHydratedSelectionFromApi.current) return;
+    if (!experienceStatusReady || !experienceStatus?.data?.selected) return;
+    const gid = experienceStatus.data.groupId;
+    if (gid) {
+      setSelectedGroupId(gid);
+      hasHydratedSelectionFromApi.current = true;
     }
-    router.replace("/browse");
-  }, [
-    experienceStatus?.data?.selected,
-    experienceStatusReady,
-    isAuthenticated,
-    router,
-  ]);
+  }, [experienceStatus?.data, experienceStatusReady]);
 
   useEffect(() => {
     const categories = data?.data?.data ?? [];
@@ -205,6 +203,24 @@ const SelectExperience = () => {
     availableExperiences?.data.find((e) => e.id === selectedGroupId)?.name ??
     null;
 
+  const hasExistingSelection =
+    experienceStatusReady && experienceStatus?.data?.selected === true;
+
+  const currentExperienceDisplayName =
+    experienceGroupDisplayName(
+      experienceStatus?.data?.experienceGroup ?? null,
+    ) ||
+    (experienceStatus?.data?.groupId
+      ? availableExperiences?.data.find(
+          (e) => e.id === experienceStatus.data.groupId,
+        )?.name
+      : null) ||
+    null;
+
+  const pageTitle = hasExistingSelection
+    ? "Change your experience"
+    : "Choose your experience";
+
   const handleContinue = () => {
     if (!selectedGroupId || isSubmittingExperience) return;
     submitExperienceGroup(
@@ -256,13 +272,33 @@ const SelectExperience = () => {
         <div className="w-full max-w-[1240px]">
           <div className="mx-auto max-w-3xl">
             <h1 className="text-center text-[2rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[2.5rem] md:text-[3.6rem]">
-              Choose your experience
+              {pageTitle}
             </h1>
-            <p className="mx-auto mt-3 text-center text-sm leading-relaxed text-[#DCDCDC] sm:text-base md:mt-4 md:text-[1.06rem]">
-              FaithStream is a daily faith companion designed to support the
-              rhythm of
-              <br className="hidden md:block" /> everyday spiritual life.
-            </p>
+            {hasExistingSelection ? (
+              <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-[#DCDCDC] sm:text-base md:mt-4 md:text-[1.06rem]">
+                {currentExperienceDisplayName ? (
+                  <>
+                    You&apos;re currently on{" "}
+                    <span className="font-medium text-white">
+                      {currentExperienceDisplayName}
+                    </span>
+                    . Select another card to switch, then continue — or keep your
+                    current choice and return to browse.
+                  </>
+                ) : (
+                  <>
+                    Select an experience below, then continue to update your
+                    choice or return to browse.
+                  </>
+                )}
+              </p>
+            ) : (
+              <p className="mx-auto mt-3 text-center text-sm leading-relaxed text-[#DCDCDC] sm:text-base md:mt-4 md:text-[1.06rem]">
+                FaithStream is a daily faith companion designed to support the
+                rhythm of
+                <br className="hidden md:block" /> everyday spiritual life.
+              </p>
+            )}
           </div>
 
           <div className="mx-auto mt-9 grid max-w-[820px] grid-cols-1 gap-7 sm:mt-10 sm:gap-8 md:mt-12 md:max-w-none md:grid-cols-3 md:gap-11">

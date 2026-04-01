@@ -2,7 +2,27 @@
 export interface ExperienceGroupStatusPayload {
   selected: boolean;
   groupId: string | null;
-  experienceGroup: string | null;
+  /** API may return a string or a nested object (e.g. `{ name: string }`) */
+  experienceGroup: string | { name?: string } | null;
+}
+
+/** Safe label for UI — handles string, `{ name }`, or other shapes without throwing */
+export function experienceGroupDisplayName(
+  value: ExperienceGroupStatusPayload["experienceGroup"],
+): string | null {
+  if (value == null) return null;
+  if (typeof value === "string") {
+    const t = value.trim();
+    return t.length > 0 ? t : null;
+  }
+  if (typeof value === "object" && value !== null && "name" in value) {
+    const n = (value as { name: unknown }).name;
+    if (typeof n === "string") {
+      const t = n.trim();
+      return t.length > 0 ? t : null;
+    }
+  }
+  return null;
 }
 
 /** Typical API envelope from privateApi.get */
