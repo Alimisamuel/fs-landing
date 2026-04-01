@@ -1,12 +1,20 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { HomeHeader } from "@/components/header";
 import { useGetQuery } from "@/hooks/useQuery";
+import { useAppSelector } from "@/store/hooks";
+import { selectIsAuthenticated } from "@/store/slices/authSlice";
 import { BannerData, ContentItem } from "@/services/bannerApi";
 import ExperienceCard from "@/components/cards/ExperienceCard";
-import Link from "next/link";
+import type { ExperienceGroupStatusResponse } from "@/services/experienceGroup";
+import { EXPERIENCE_GROUP_STATUS_QUERY_KEY } from "@/services/experienceGroup";
+import { Button, Skeleton } from "@mui/material";
+import { IoArrowForward } from "react-icons/io5";
+import { GrFormNext } from "react-icons/gr";
+import { GoArrowRight } from "react-icons/go";
 
 interface ContentRes {
   data: {
@@ -14,11 +22,26 @@ interface ContentRes {
   };
 }
 
+interface AvailableExperiencesResponse {
+  data: {
+    id: string;
+    name: string;
+    description: string;
+    isActive: boolean;
+    contentTypes: { bannerImage: string }[];
+  }[];
+}
+
 interface TrailerItem {
   src: string;
 }
 
 const SelectExperience = () => {
+  const router = useRouter();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
+  const [selectedExperience, setSelectedExperience] = useState<string | null>(null);
+
   const { data } = useGetQuery<ContentRes>(
     ["landing_movies"],
     "content/categories-landing-page?limit=10",
@@ -34,9 +57,35 @@ const SelectExperience = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slotSources, setSlotSources] = useState<[string, string]>(["", ""]);
 
-  const {data:status} = useGetQuery([""], `/users/me/experience-group-status`)
+  const { data: experienceStatus, isSuccess: experienceStatusReady } =
+    useGetQuery<ExperienceGroupStatusResponse>(
+      [...EXPERIENCE_GROUP_STATUS_QUERY_KEY],
+      "/users/me/experience-group-status",
+      isAuthenticated,
+    );
 
-  console.log(status, "STATUS");
+  const { data: availableExperiences, isPending: gettingAvailableExperiences } =
+    useGetQuery<AvailableExperiencesResponse>(
+      ["available-experiences"],
+      "/content/experience-groups",
+      isAuthenticated,
+    );
+
+  useEffect(() => {
+    if (
+      !experienceStatusReady ||
+      !isAuthenticated ||
+      !experienceStatus?.data?.selected
+    ) {
+      return;
+    }
+    router.replace("/browse");
+  }, [
+    experienceStatus?.data?.selected,
+    experienceStatusReady,
+    isAuthenticated,
+    router,
+  ]);
 
   useEffect(() => {
     const categories = data?.data?.data ?? [];
@@ -204,30 +253,38 @@ const SelectExperience = () => {
           </div>
 
           <div className="mx-auto mt-9 grid max-w-[820px] grid-cols-1 gap-7 sm:mt-10 sm:gap-8 md:mt-12 md:max-w-none md:grid-cols-3 md:gap-11">
-            <Link href="/browse">
-            <ExperienceCard
-              description="When you need a moment with God, this is where you begin."
-              entranceIndex={0}
-              title="Encounter"
-              imageUrl="/images/movie6.png"
-            />
-            </Link>
-            <Link href="/browse">
-            <ExperienceCard
-              description="Faith grows through learning, reflection, and daily spiritual practice."
-              entranceIndex={1}
-              title="Growth"
-              imageUrl="/images/movie7.png"
-            />
-            </Link>
-            <Link href="/browse">
-            <ExperienceCard
-              description="FaithStream brings you films and series rooted in faith, hope, redemption, and purpose."
-              entranceIndex={2}
-              title="Entertainment "
-              imageUrl="/images/movie5.png"
-            />
-            </Link>
+            {gettingAvailableExperiences ? (
+              <>
+                {[...Array(3)].map((_, idx) => (
+                  <Skeleton
+                    animation="wave"
+                    sx={{ width: "100%", height: "200px", borderRadius: "8px" }}
+                    key={idx}
+                    variant="rectangular"
+                  />
+                ))}
+              </>
+            ) : (
+              availableExperiences?.data.map((experience, idx) => (
+                <ExperienceCard
+                  description={experience.description}
+                  entranceIndex={idx}
+                  title={experience.name}
+                  imageUrl={experience.contentTypes[0]?.bannerImage ?? ""}
+                />
+              ))
+            )}
+          </div>
+
+          <div className="mt-20 flex justify-center">
+            <Button
+            disabled={gettingAvailableExperiences}
+            endIcon={<GoArrowRight className="text-[12px]" />}
+              variant="contained"
+              sx={{ height: "56px", borderRadius: "8px", minWidth: "200px" }}
+            >
+              Continue with Encounter
+            </Button>
           </div>
         </div>
       </div>

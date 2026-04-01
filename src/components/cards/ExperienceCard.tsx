@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Play } from "lucide-react";
 
-import { setSelectedExperience } from "@/lib/selectedExperience";
+import { useSelectExperienceGroupMutation } from "@/hooks/useSelectExperienceGroupMutation";
 
 interface ContentCardProps {
   title: string;
@@ -26,6 +26,7 @@ const ExperienceCard = ({
   entranceIndex = 0,
 }: ContentCardProps) => {
   const router = useRouter();
+  const { mutate, isPending } = useSelectExperienceGroupMutation();
   const uid = useId().replace(/:/g, "");
   const clipId = `experience-card-clip-${uid}`;
   const gradientId = `experience-card-outline-${uid}`;
@@ -34,9 +35,14 @@ const ExperienceCard = ({
   const clipUrl = `url(#${clipId})`;
 
   const handleSelectExperience = useCallback(() => {
-    setSelectedExperience(title);
-    router.push("/browse");
-  }, [router, title]);
+    if (isPending) return;
+    mutate(
+      { experienceGroup: title.trim() },
+      {
+        onSuccess: () => router.push("/browse"),
+      },
+    );
+  }, [isPending, mutate, router, title]);
   /** Duplicate on the scaling layer so cover+scale cannot paint past the border (WebKit + subpixel). */
   const clipStyle = {
     clipPath: clipUrl,
@@ -46,9 +52,10 @@ const ExperienceCard = ({
   return (
     <motion.article
       role="button"
-      tabIndex={0}
+      tabIndex={isPending ? -1 : 0}
+      aria-busy={isPending}
       aria-label={`Select ${title} experience`}
-      className="group relative mx-auto w-full max-w-[384.52px] cursor-pointer overflow-visible [container-type:inline-size]"
+      className={`group relative mx-auto w-full max-w-[384.52px] cursor-pointer overflow-visible [container-type:inline-size] ${isPending ? "pointer-events-none opacity-70" : ""}`}
       onClick={handleSelectExperience}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
