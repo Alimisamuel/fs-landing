@@ -282,8 +282,8 @@ const SelectExperience = () => {
                     <span className="font-medium text-white">
                       {currentExperienceDisplayName}
                     </span>
-                    . Select another card to switch, then continue — or keep your
-                    current choice and return to browse.
+                    {/* . Select another card to switch, then continue — or keep your
+                    current choice and return to browse. */}
                   </>
                 ) : (
                   <>
@@ -331,6 +331,8 @@ const SelectExperience = () => {
 
           <div className="mt-20 flex justify-center">
             <Button
+            loading={isSubmittingExperience}
+              loadingPosition="end"
               disabled={
                 gettingAvailableExperiences ||
                 !selectedGroupId ||

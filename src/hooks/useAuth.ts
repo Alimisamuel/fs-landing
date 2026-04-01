@@ -61,8 +61,14 @@ export const useAuth = () => {
         token: result.data.accessToken,
         refreshToken: result.data.refreshToken
       }));
-      
-      router.push('/team');
+
+      if (!result.data.data.emailVerified) {
+        router.push(
+          `/auth/verify-otp?email=${encodeURIComponent(credentials.email)}`,
+        );
+      } else {
+        router.push('/team');
+      }
       return { success: true, data: result };
     } catch (error: any) {
       const errorMessage = error?.data?.message || error?.message || 'Login failed';

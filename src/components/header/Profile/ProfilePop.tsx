@@ -17,6 +17,7 @@ import { UserProfile } from "@/services/profile";
 import { updateAccessToken } from "@/store/slices/authSlice";
 import { useAppDispatch } from "@/store/hooks";
 import useBreakpoint from "@/hooks/useBreakpoints";
+import { BsPersonVideo3 } from "react-icons/bs";
 
 const ProfilePop: FC = () => {
   const [profile, setProfile] = useState<StreamingProfile | null>(null);
@@ -218,19 +219,14 @@ const PricingContent: FC = () => {
             </p>
           </div>
         </Link>
-        {/* <Link href="/watch-insight" >
+        <Link href="/experience" >
           <div className="py-2 hover:bg-grey rounded cursor-pointer flex flex-row items-center gap-x-4 px-2">
-            <Image
-              src="/icons/bar-chart.svg"
-              alt="bar chart"
-              width={15}
-              height={15}
-            />
+           <BsPersonVideo3 className="text-white text-[14px]"/>
             <p className="text-white text-[14px] font-[500] text-nowrap">
-              Watch Insight
+              Change Experience
             </p>
           </div>
-        </Link> */}
+        </Link>
         <Link href="/make-a-donation" >
           <div className="py-2 hover:bg-grey rounded cursor-pointer flex flex-row items-center gap-x-4 px-2">
             <Image

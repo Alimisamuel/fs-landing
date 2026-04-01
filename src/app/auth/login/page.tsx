@@ -14,8 +14,6 @@ import { Button, Checkbox, Divider } from "@mui/material";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
 import React, { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
@@ -81,8 +79,6 @@ const Login = () => {
     }
   };
 
-  const route = useRouter();
-
   const handleAlert = useAlert();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,16 +97,13 @@ const Login = () => {
       city:location?.city
     });
 
-    if (result.success) {
-      if (!result.data?.data.data.emailVerified) {
-        route.push(`/auth/verify-otp?email=${formData.email}`);
-      }
-    } else {
+    if (!result.success) {
       handleAlert({
         message: `${result.error}`,
         variant: "error",
       });
     }
+    // Success navigation is handled in useAuth (verify-otp or /team).
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

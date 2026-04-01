@@ -56,7 +56,7 @@ const Team = () => {
 
   const handleDispatchProfile = (profile: UserProfile) => {
     localStorage.setItem("streaming_profile", JSON.stringify(profile));
-    route.push("/browse");
+    route.push("/experience");
 
     dispatch(
       updateAccessToken({
