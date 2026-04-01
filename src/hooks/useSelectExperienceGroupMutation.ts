@@ -7,16 +7,12 @@ import {
   type SelectExperienceGroupBody,
 } from "@/services/experienceGroup";
 
-/**
- * Persists the user's experience group choice.
- * Adjust path/body if your API differs (e.g. PATCH, or { groupId }).
- */
 export function useSelectExperienceGroupMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (body: SelectExperienceGroupBody) => {
-      const { data } = await privateApi.post<unknown>(
+      const { data } = await privateApi.patch<unknown>(
         "/users/me/experience-group",
         body,
       );

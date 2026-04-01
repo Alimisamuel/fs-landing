@@ -20,7 +20,7 @@ export const EXPERIENCE_GROUP_STATUS_QUERY_KEY = [
   "experience-group-status",
 ] as const;
 
-/** POST body when user picks an experience (adjust if backend expects groupId, etc.) */
+/** PATCH body for /users/me/experience-group */
 export interface SelectExperienceGroupBody {
-  experienceGroup: string;
+  groupId: string;
 }

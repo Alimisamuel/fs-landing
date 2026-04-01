@@ -2,15 +2,15 @@
 
 import { useCallback, useId } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { Play } from "lucide-react";
-
-import { useSelectExperienceGroupMutation } from "@/hooks/useSelectExperienceGroupMutation";
 
 interface ContentCardProps {
   title: string;
   description: string;
   imageUrl: string;
+  groupId: string;
+  isSelected: boolean;
+  onSelect: (groupId: string) => void;
   /** 0-based order for staggered grid entrance */
   entranceIndex?: number;
 }
@@ -23,10 +23,11 @@ const ExperienceCard = ({
   title,
   description,
   imageUrl,
+  groupId,
+  isSelected,
+  onSelect,
   entranceIndex = 0,
 }: ContentCardProps) => {
-  const router = useRouter();
-  const { mutate, isPending } = useSelectExperienceGroupMutation();
   const uid = useId().replace(/:/g, "");
   const clipId = `experience-card-clip-${uid}`;
   const gradientId = `experience-card-outline-${uid}`;
@@ -34,15 +35,14 @@ const ExperienceCard = ({
   const baseDelay = entranceIndex * 0.15;
   const clipUrl = `url(#${clipId})`;
 
-  const handleSelectExperience = useCallback(() => {
-    if (isPending) return;
-    mutate(
-      { experienceGroup: title.trim() },
-      {
-        onSuccess: () => router.push("/browse"),
-      },
-    );
-  }, [isPending, mutate, router, title]);
+  const handleSelect = useCallback(() => {
+    onSelect(groupId);
+  }, [groupId, onSelect]);
+
+  const selectionSpring = reduceMotion
+    ? { duration: 0.2, ease: "easeOut" as const }
+    : { type: "spring" as const, stiffness: 320, damping: 28, mass: 0.88 };
+
   /** Duplicate on the scaling layer so cover+scale cannot paint past the border (WebKit + subpixel). */
   const clipStyle = {
     clipPath: clipUrl,
@@ -50,19 +50,8 @@ const ExperienceCard = ({
   } as const;
 
   return (
-    <motion.article
-      role="button"
-      tabIndex={isPending ? -1 : 0}
-      aria-busy={isPending}
-      aria-label={`Select ${title} experience`}
-      className={`group relative mx-auto w-full max-w-[384.52px] cursor-pointer overflow-visible [container-type:inline-size] ${isPending ? "pointer-events-none opacity-70" : ""}`}
-      onClick={handleSelectExperience}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          handleSelectExperience();
-        }
-      }}
+    <motion.div
+      className="relative mx-auto w-full max-w-[384.52px]"
       initial={
         reduceMotion ? false : { opacity: 0, y: 52, scale: 0.92, rotate: -0.8 }
       }
@@ -71,14 +60,76 @@ const ExperienceCard = ({
         reduceMotion
           ? { duration: 0 }
           : {
-              type: "spring",
-              stiffness: 72,
-              damping: 22,
-              mass: 0.92,
-              delay: baseDelay,
+              opacity: {
+                delay: baseDelay,
+                duration: 0.55,
+                ease: [0.22, 1, 0.36, 1],
+              },
+              y: {
+                delay: baseDelay,
+                type: "spring",
+                stiffness: 72,
+                damping: 22,
+                mass: 0.92,
+              },
+              scale: {
+                delay: baseDelay,
+                type: "spring",
+                stiffness: 72,
+                damping: 22,
+                mass: 0.92,
+              },
+              rotate: {
+                delay: baseDelay,
+                type: "spring",
+                stiffness: 72,
+                damping: 22,
+                mass: 0.92,
+              },
             }
       }
     >
+      <motion.article
+        role="button"
+        tabIndex={0}
+        aria-pressed={isSelected}
+        aria-label={`Select ${title} experience`}
+        className="group relative w-full cursor-pointer overflow-visible [container-type:inline-size]"
+        onClick={handleSelect}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleSelect();
+          }
+        }}
+        initial={false}
+        animate={{
+          y: isSelected ? -7 : 0,
+          scale: isSelected ? 1.028 : 1,
+          boxShadow: isSelected
+            ? "0 22px 44px -12px rgba(110, 189, 228, 0.38), 0 0 0 1px rgba(110, 189, 228, 0.5), 0 0 36px -6px rgba(224, 143, 211, 0.22)"
+            : "0 0 0 0 rgba(0,0,0,0)",
+        }}
+        transition={{
+          y: selectionSpring,
+          scale: selectionSpring,
+          boxShadow: selectionSpring,
+        }}
+      >
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute -inset-4 -z-10 rounded-[18px]"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 70% at 50% 38%, rgba(110,189,228,0.5) 0%, rgba(224,143,211,0.22) 42%, transparent 68%)",
+        }}
+        initial={false}
+        animate={{
+          opacity: isSelected ? 1 : 0,
+          scale: isSelected ? 1 : 0.88,
+        }}
+        transition={selectionSpring}
+      />
       <svg className="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
         <defs>
           <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
@@ -90,18 +141,22 @@ const ExperienceCard = ({
       <motion.div
         className="relative aspect-[385/300] w-full transition-transform duration-500 ease-out group-hover:scale-[1.01]"
         initial={
-          reduceMotion ? false : { filter: "blur(14px) saturate(0.88)" }
+          reduceMotion ? false : { filter: "blur(14px) saturate(0.88)", scale: 1 }
         }
-        animate={{ filter: "blur(0px) saturate(1)" }}
-        transition={
-          reduceMotion
+        animate={{
+          filter: "blur(0px) saturate(1)",
+          scale: reduceMotion ? 1 : isSelected ? 1.012 : 1,
+        }}
+        transition={{
+          filter: reduceMotion
             ? { duration: 0 }
             : {
                 delay: baseDelay + 0.06,
                 duration: 0.95,
                 ease: [0.16, 1, 0.3, 1],
-              }
-        }
+              },
+          scale: selectionSpring,
+        }}
       >
         <div
           className="absolute inset-0 isolate overflow-hidden"
@@ -212,10 +267,16 @@ const ExperienceCard = ({
             d={CARD_PATH}
             fill="none"
             stroke={`url(#${gradientId})`}
-            strokeWidth="3"
             strokeLinejoin="round"
             initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
+            animate={{
+              pathLength: 1,
+              opacity: 1,
+              strokeWidth: isSelected ? 3.85 : 3,
+              filter: isSelected
+                ? "drop-shadow(0 0 14px rgba(110,189,228,0.75)) drop-shadow(0 0 28px rgba(224,143,211,0.45))"
+                : "drop-shadow(0 0 8px rgba(110,189,228,0.35))",
+            }}
             transition={
               reduceMotion
                 ? { duration: 0 }
@@ -230,9 +291,11 @@ const ExperienceCard = ({
                       duration: 0.4,
                       ease: "easeOut",
                     },
+                    strokeWidth: selectionSpring,
+                    filter: { duration: 0.45, ease: [0.22, 1, 0.4, 1] },
                   }
             }
-            className="transition-[filter] duration-500 [filter:drop-shadow(0_0_8px_rgba(110,189,228,0.35))] group-hover:[filter:drop-shadow(0_0_14px_rgba(224,143,211,0.45))]"
+            className="group-hover:[filter:drop-shadow(0_0_14px_rgba(224,143,211,0.45))]"
           />
         </svg>
       </motion.div>
@@ -243,11 +306,17 @@ const ExperienceCard = ({
         className="absolute bottom-[clamp(-0.5rem,-2.1cqw,-0.35rem)] right-0 z-20 flex size-[clamp(2.75rem,14.5cqw,3.5rem)] items-center justify-center rounded-full border border-white bg-[linear-gradient(165deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.06)_100%)] shadow-[0_10px_28px_rgba(0,0,0,0.45),0_0_0_1px_rgba(110,189,228,0.2)_inset] backdrop-blur-md transition-[filter,box-shadow] duration-300 hover:shadow-[0_14px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(224,143,211,0.25)_inset] active:scale-[0.98] group-hover:brightness-110"
         onClick={(event) => {
           event.stopPropagation();
-          handleSelectExperience();
+          handleSelect();
         }}
         initial={reduceMotion ? false : { opacity: 0, scale: 0.35, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        whileHover={reduceMotion ? undefined : { scale: 1.06 }}
+        animate={{
+          opacity: 1,
+          scale: isSelected ? 1.07 : 1,
+          y: 0,
+        }}
+        whileHover={
+          reduceMotion ? undefined : { scale: isSelected ? 1.09 : 1.06 }
+        }
         whileTap={reduceMotion ? undefined : { scale: 0.97 }}
         transition={
           reduceMotion
@@ -257,6 +326,7 @@ const ExperienceCard = ({
                 stiffness: 380,
                 damping: 22,
                 delay: baseDelay + 0.52,
+                scale: selectionSpring,
               }
         }
       >
@@ -266,6 +336,7 @@ const ExperienceCard = ({
         />
       </motion.button>
     </motion.article>
+    </motion.div>
   );
 };
 

@@ -9,11 +9,10 @@ import { useAppSelector } from "@/store/hooks";
 import { selectIsAuthenticated } from "@/store/slices/authSlice";
 import { BannerData, ContentItem } from "@/services/bannerApi";
 import ExperienceCard from "@/components/cards/ExperienceCard";
+import { useSelectExperienceGroupMutation } from "@/hooks/useSelectExperienceGroupMutation";
 import type { ExperienceGroupStatusResponse } from "@/services/experienceGroup";
 import { EXPERIENCE_GROUP_STATUS_QUERY_KEY } from "@/services/experienceGroup";
 import { Button, Skeleton } from "@mui/material";
-import { IoArrowForward } from "react-icons/io5";
-import { GrFormNext } from "react-icons/gr";
 import { GoArrowRight } from "react-icons/go";
 
 interface ContentRes {
@@ -39,8 +38,10 @@ interface TrailerItem {
 const SelectExperience = () => {
   const router = useRouter();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const { mutate: submitExperienceGroup, isPending: isSubmittingExperience } =
+    useSelectExperienceGroupMutation();
 
-  const [selectedExperience, setSelectedExperience] = useState<string | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
 
   const { data } = useGetQuery<ContentRes>(
     ["landing_movies"],
@@ -200,6 +201,18 @@ const SelectExperience = () => {
     }, 700);
   };
 
+  const selectedExperienceName =
+    availableExperiences?.data.find((e) => e.id === selectedGroupId)?.name ??
+    null;
+
+  const handleContinue = () => {
+    if (!selectedGroupId || isSubmittingExperience) return;
+    submitExperienceGroup(
+      { groupId: selectedGroupId },
+      { onSuccess: () => router.push("/browse") },
+    );
+  };
+
   return (
     <div className="relative min-h-dvh overflow-x-hidden bg-black text-white">
       <HomeHeader hideNav={true} />
@@ -267,10 +280,14 @@ const SelectExperience = () => {
             ) : (
               availableExperiences?.data.map((experience, idx) => (
                 <ExperienceCard
+                  key={experience.id}
                   description={experience.description}
                   entranceIndex={idx}
-                  title={experience.name}
+                  groupId={experience.id}
                   imageUrl={experience.contentTypes[0]?.bannerImage ?? ""}
+                  isSelected={selectedGroupId === experience.id}
+                  title={experience.name}
+                  onSelect={setSelectedGroupId}
                 />
               ))
             )}
@@ -278,12 +295,19 @@ const SelectExperience = () => {
 
           <div className="mt-20 flex justify-center">
             <Button
-            disabled={gettingAvailableExperiences}
-            endIcon={<GoArrowRight className="text-[12px]" />}
+              disabled={
+                gettingAvailableExperiences ||
+                !selectedGroupId ||
+                isSubmittingExperience
+              }
+              endIcon={<GoArrowRight className="text-[12px]" />}
               variant="contained"
               sx={{ height: "56px", borderRadius: "8px", minWidth: "200px" }}
+              onClick={handleContinue}
             >
-              Continue with Encounter
+              {selectedExperienceName
+                ? `Continue with ${selectedExperienceName}`
+                : "Continue"}
             </Button>
           </div>
         </div>
