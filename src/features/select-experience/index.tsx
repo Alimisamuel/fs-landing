@@ -29,6 +29,7 @@ interface AvailableExperiencesResponse {
     id: string;
     name: string;
     description: string;
+    icon:string;
     isActive: boolean;
     contentTypes: { bannerImage: string }[];
   }[];
@@ -320,7 +321,7 @@ const SelectExperience = () => {
                   description={experience.description}
                   entranceIndex={idx}
                   groupId={experience.id}
-                  imageUrl={experience.contentTypes[0]?.bannerImage ?? ""}
+                  imageUrl={experience.icon ?? ""}
                   isSelected={selectedGroupId === experience.id}
                   title={experience.name}
                   onSelect={setSelectedGroupId}
