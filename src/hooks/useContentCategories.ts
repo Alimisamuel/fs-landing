@@ -24,7 +24,9 @@ export interface ContentNav {
 
 interface NavResponse {
   data:{
-     contentTypes:ContentNav[]
+     experienceGroup:{
+       contentTypes: ContentNav[]
+     }
    }
    status:string;
    message:string;
@@ -33,11 +35,14 @@ interface NavResponse {
 export const useContentCategories = (slug?: string) => {
   const { isPending, data, refetch } = useGetQuery<NavResponse>(
     ["navs"],
-    "/content/content-types/list"
+    "/users/me/experience-group-status"
   );
 
+  console.log("useContentCategories data:", data?.data?.experienceGroup
+);
+
   // all categories
-  const categories = data?.data?.contentTypes || [];;
+  const categories = data?.data?.experienceGroup?.contentTypes || [];;
 
   // single category by slug
   const selectedCategory = useMemo(() => {

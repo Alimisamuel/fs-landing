@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -17,6 +19,9 @@ import {
 } from "@/services/experienceGroup";
 import { Button, Skeleton } from "@mui/material";
 import { GoArrowRight } from "react-icons/go";
+import { useContentCategoryData } from "@/hooks/useBannerData";
+import { processCategoriesWithRecentFlags } from "@/utils/videoProcessing";
+import Carousel from "@/components/Sliders/Carousel";
 
 interface ContentRes {
   data: {
@@ -29,7 +34,7 @@ interface AvailableExperiencesResponse {
     id: string;
     name: string;
     description: string;
-    icon:string;
+    icon: string;
     isActive: boolean;
     contentTypes: { bannerImage: string }[];
   }[];
@@ -229,6 +234,22 @@ const SelectExperience = () => {
       { onSuccess: () => router.push("/browse") },
     );
   };
+  const {
+    data: contentCategoryData,
+    isLoading: contentCategoryLoading,
+    error: contentCategoryError,
+  } = useContentCategoryData();
+
+  // Process categories and add isRecent flags to all videos
+  const processedCategories = processCategoriesWithRecentFlags(
+    contentCategoryData?.data?.data || [],
+  );
+
+  const Top10 = processedCategories?.filter(
+    (c: any) => c.categoryName === "TOP 10 in Nigeria",
+  );
+
+  console.log("other_categories", Top10);
 
   return (
     <div className="relative min-h-dvh overflow-x-hidden bg-black text-white">
@@ -332,7 +353,7 @@ const SelectExperience = () => {
 
           <div className="mt-20 flex justify-center">
             <Button
-            loading={isSubmittingExperience}
+              loading={isSubmittingExperience}
               loadingPosition="end"
               disabled={
                 gettingAvailableExperiences ||
@@ -349,9 +370,33 @@ const SelectExperience = () => {
                 : "Continue"}
             </Button>
           </div>
+
+          <div className="mb-5">
+             {Top10
+              ?.filter((cat: any) => cat?.videos?.length > 0)
+              ?.map((cat: any, idx: number) => {
+                const isTop10 = cat?.categoryName
+                  ?.toLowerCase()
+                  .includes("top");
+                const IsContinue = cat?.categoryName === "Continue Watching";
+
+                return (
+                  <div className="mt-15" key={idx}>
+                    <Carousel
+                      title={"We Think You\'ll Love These:"}
+                      isTop10={false}
+                      items={cat?.videos ?? []}
+                      watching={IsContinue}
+                      isLoading={contentCategoryLoading}
+                    />
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
     </div>
+
   );
 };
 

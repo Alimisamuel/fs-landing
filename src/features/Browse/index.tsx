@@ -34,6 +34,8 @@ const BrowsePage = () => {
 
   const query = useSearchQuery();
 
+
+
   return (
     <>
       <HomeHeader />
@@ -62,17 +64,15 @@ const BrowsePage = () => {
             {other_categories
               ?.filter((cat: any) => cat?.videos?.length > 0)
               ?.map((cat: any, idx: number) => {
-                const isTop10 = cat?.categoryName === "TOP 10";
+                const isTop10 = cat?.categoryName
+                  ?.toLowerCase()
+                  .includes("top");
                 const IsContinue = cat?.categoryName === "Continue Watching";
 
                 return (
                   <div className="mt-15" key={idx}>
                     <Carousel
-                      title={
-                        isTop10
-                          ? "Top 10 movies in Nigeria Today"
-                          : cat?.categoryName
-                      }
+                      title={cat?.categoryName}
                       isTop10={isTop10}
                       items={cat?.videos ?? []}
                       watching={IsContinue}
