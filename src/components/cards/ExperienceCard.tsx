@@ -13,6 +13,7 @@ interface ContentCardProps {
   onSelect: (groupId: string) => void;
   /** 0-based order for staggered grid entrance */
   entranceIndex?: number;
+  onClick?: () => void;
 }
 
 /** 385×300 frame, 8px main corner radius, top-right “bubble” cutout */
@@ -27,6 +28,7 @@ const ExperienceCard = ({
   isSelected,
   onSelect,
   entranceIndex = 0,
+  onClick,
 }: ContentCardProps) => {
   const uid = useId().replace(/:/g, "");
   const clipId = `experience-card-clip-${uid}`;
@@ -51,6 +53,7 @@ const ExperienceCard = ({
 
   return (
     <motion.div
+    onClick={onClick}
       className="relative mx-auto w-full max-w-[384.52px]"
       initial={
         reduceMotion ? false : { opacity: 0, y: 52, scale: 0.92, rotate: -0.8 }

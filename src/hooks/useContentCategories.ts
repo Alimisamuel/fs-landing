@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { useGetQuery } from "./useQuery";
+import { useAppSelector } from "@/store/hooks";
+import { selectIsAuthenticated } from "@/store/slices/authSlice";
 
 
 export interface ContentNav {
@@ -33,9 +35,11 @@ interface NavResponse {
 }
 
 export const useContentCategories = (slug?: string) => {
+    const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const { isPending, data, refetch } = useGetQuery<NavResponse>(
     ["navs"],
-    "/users/me/experience-group-status"
+    "/users/me/experience-group-status",
+    isAuthenticated
   );
 
   console.log("useContentCategories data:", data?.data?.experienceGroup

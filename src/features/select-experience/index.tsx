@@ -22,6 +22,7 @@ import { GoArrowRight } from "react-icons/go";
 import { useContentCategoryData } from "@/hooks/useBannerData";
 import { processCategoriesWithRecentFlags } from "@/utils/videoProcessing";
 import Carousel from "@/components/Sliders/Carousel";
+import Loader from "@/components/UI/Loader";
 
 interface ContentRes {
   data: {
@@ -254,6 +255,9 @@ const SelectExperience = () => {
   return (
     <div className="relative min-h-dvh overflow-x-hidden bg-black text-white">
       <HomeHeader hideNav={true} />
+      {
+        isSubmittingExperience && <Loader label="Updating experience..."/>
+      }
       {/* Fixed full-viewport backdrop so main content can scroll on small screens */}
       <div
         className="pointer-events-none fixed inset-0 z-0 min-h-dvh"
@@ -338,6 +342,7 @@ const SelectExperience = () => {
             ) : (
               availableExperiences?.data.map((experience, idx) => (
                 <ExperienceCard
+                onClick={handleContinue}
                   key={experience.id}
                   description={experience.description}
                   entranceIndex={idx}
@@ -351,7 +356,7 @@ const SelectExperience = () => {
             )}
           </div>
 
-          <div className="mt-20 flex justify-center">
+          {/* <div className="mt-20 flex justify-center">
             <Button
               loading={isSubmittingExperience}
               loadingPosition="end"
@@ -363,13 +368,13 @@ const SelectExperience = () => {
               endIcon={<GoArrowRight className="text-[12px]" />}
               variant="contained"
               sx={{ height: "56px", borderRadius: "8px", minWidth: "200px" }}
-              onClick={handleContinue}
+              
             >
               {selectedExperienceName
                 ? `Continue with ${selectedExperienceName}`
                 : "Continue"}
             </Button>
-          </div>
+          </div> */}
 
           <div className="mb-5">
              {Top10

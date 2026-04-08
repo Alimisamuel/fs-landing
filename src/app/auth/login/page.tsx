@@ -115,7 +115,7 @@ const Login = () => {
   };
   return (
     <AuthLayouts>
-      {(isLoading || isPending) && <Loader label="loading..." />}
+      {(isLoading ) && <Loader label="loading..." />}
       <div className="bg-[#00000099] backdrop-blur-md rounded-[10px] p-5">
         <p className="text-center font-[700] text-[25px]">Welcome Back</p>
         <p className="text-center mt-2 text-[#ffffffae] text-sm">

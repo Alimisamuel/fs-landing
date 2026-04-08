@@ -26,7 +26,7 @@ const Loader = ({label}:{label?:string}) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div className="bg-[#ffffff8f] h-[108px] w-[128px] rounded-[8px] flex flex-col items-center justify-center">
+          <div className="bg-[#ffffff8f] h-[108px] w-fit px-4 rounded-[8px] flex flex-col items-center justify-center">
 
          <span className="loader"></span>
          <p className="font-[500] text-sm mt-2">{label || "Verifying..."}</p>

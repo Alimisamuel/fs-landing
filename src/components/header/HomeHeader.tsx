@@ -143,7 +143,7 @@ const HomeHeader = (props: Props) => {
                 <IoMenu />
               </IconButton>
             )}
-            <Link href="/browse">
+            <Link href="/experience">
               <div className="flex flex-row gap-x-2.5 items-center cursor-pointer">
                 <Image
                   src={"/logo/logo_white.svg"}
