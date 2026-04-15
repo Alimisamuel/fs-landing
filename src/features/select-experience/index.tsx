@@ -225,8 +225,8 @@ const SelectExperience = () => {
     null;
 
   const pageTitle = hasExistingSelection
-    ? "Change your experience"
-    : "Choose your experience";
+    ? "What do you need today"
+    : "What do you need today";
 
   const handleContinue = () => {
     if (!selectedGroupId || isSubmittingExperience) return;
@@ -297,6 +297,9 @@ const SelectExperience = () => {
       <div className="relative z-10 w-full px-5 pb-20 pt-32 md:flex md:min-h-dvh md:items-center md:justify-center md:px-10 md:pb-16 md:pt-28">
         <div className="w-full max-w-[1240px]">
           <div className="mx-auto max-w-3xl">
+           <div className="w-full ">
+             <p className="text-center font-bold text-[#ccc]">Step 1 of 1</p>
+           </div>
             <h1 className="text-center text-[2rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[2.5rem] md:text-[3.6rem]">
               {pageTitle}
             </h1>
@@ -313,8 +316,7 @@ const SelectExperience = () => {
                   </>
                 ) : (
                   <>
-                    Select an experience below, then continue to update your
-                    choice or return to browse.
+                   Choose an experience to begin.
                   </>
                 )}
               </p>

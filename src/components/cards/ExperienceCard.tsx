@@ -14,6 +14,7 @@ interface ContentCardProps {
   /** 0-based order for staggered grid entrance */
   entranceIndex?: number;
   onClick?: () => void;
+
 }
 
 /** 385×300 frame, 8px main corner radius, top-right “bubble” cutout */
@@ -217,7 +218,7 @@ const ExperienceCard = ({
                   {title}
                 </motion.h3>
                 <motion.p
-                  className="max-w-[24rem] pt-[clamp(0.85rem,3.2cqw,1.25rem)] text-[clamp(0.8125rem,3.8cqw,0.875rem)] leading-[1.15] text-[#DCDCDC] line-clamp-2 break-words"
+                  className="max-w-[24rem] text-[clamp(0.8125rem,3.8cqw,0.875rem)] leading-[1.15] text-[#DCDCDC] line-clamp-2 break-words"
                   title={description}
                   variants={{
                     hidden: reduceMotion
