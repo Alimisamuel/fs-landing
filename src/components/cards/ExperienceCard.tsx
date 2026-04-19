@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Play } from "lucide-react";
 
@@ -10,11 +10,13 @@ interface ContentCardProps {
   imageUrl: string;
   groupId: string;
   isSelected: boolean;
+  hasActiveSelection: boolean;
   onSelect: (groupId: string) => void;
   /** 0-based order for staggered grid entrance */
   entranceIndex?: number;
-  onClick?: () => void;
-
+  onClick?: (groupId: string) => void;
+  /** Light haptic (mobile) or soft click — invoked on select */
+  onSelectionFeedback?: () => void;
 }
 
 /** 385×300 frame, 8px main corner radius, top-right “bubble” cutout */
@@ -27,9 +29,11 @@ const ExperienceCard = ({
   imageUrl,
   groupId,
   isSelected,
+  hasActiveSelection,
   onSelect,
   entranceIndex = 0,
   onClick,
+  onSelectionFeedback,
 }: ContentCardProps) => {
   const uid = useId().replace(/:/g, "");
   const clipId = `experience-card-clip-${uid}`;
@@ -37,14 +41,43 @@ const ExperienceCard = ({
   const reduceMotion = useReducedMotion();
   const baseDelay = entranceIndex * 0.15;
   const clipUrl = `url(#${clipId})`;
+  const [isPulsingGlow, setIsPulsingGlow] = useState(false);
+  const pulseEndRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (pulseEndRef.current) clearTimeout(pulseEndRef.current);
+    };
+  }, []);
+
+  const triggerGlowPulse = useCallback(() => {
+    if (reduceMotion) return;
+    if (pulseEndRef.current) clearTimeout(pulseEndRef.current);
+    setIsPulsingGlow(true);
+    pulseEndRef.current = setTimeout(() => {
+      setIsPulsingGlow(false);
+      pulseEndRef.current = null;
+    }, 150);
+  }, [reduceMotion]);
 
   const handleSelect = useCallback(() => {
+    triggerGlowPulse();
+    onSelectionFeedback?.();
     onSelect(groupId);
-  }, [groupId, onSelect]);
+    onClick?.(groupId);
+  }, [
+    groupId,
+    onClick,
+    onSelect,
+    onSelectionFeedback,
+    triggerGlowPulse,
+  ]);
 
   const selectionSpring = reduceMotion
     ? { duration: 0.2, ease: "easeOut" as const }
     : { type: "spring" as const, stiffness: 320, damping: 28, mass: 0.88 };
+
+  const glowRestScale = isSelected ? 1.08 : 0.88;
 
   /** Duplicate on the scaling layer so cover+scale cannot paint past the border (WebKit + subpixel). */
   const clipStyle = {
@@ -54,7 +87,6 @@ const ExperienceCard = ({
 
   return (
     <motion.div
-    onClick={onClick}
       className="relative mx-auto w-full max-w-[384.52px]"
       initial={
         reduceMotion ? false : { opacity: 0, y: 52, scale: 0.92, rotate: -0.8 }
@@ -108,15 +140,17 @@ const ExperienceCard = ({
         }}
         initial={false}
         animate={{
-          y: isSelected ? -7 : 0,
-          scale: isSelected ? 1.028 : 1,
+          y: isSelected ? -9 : 0,
+          scale: isSelected ? 1.06 : 1,
+          opacity: hasActiveSelection && !isSelected ? 0.76 : 1,
           boxShadow: isSelected
-            ? "0 22px 44px -12px rgba(110, 189, 228, 0.38), 0 0 0 1px rgba(110, 189, 228, 0.5), 0 0 36px -6px rgba(224, 143, 211, 0.22)"
+            ? "0 10px 24px rgba(17, 24, 39, 0.38), 0 0 0 1px rgba(110, 189, 228, 0.62), 0 0 50px -4px rgba(110, 189, 228, 0.58), 0 0 44px -6px rgba(224, 143, 211, 0.34)"
             : "0 0 0 0 rgba(0,0,0,0)",
         }}
         transition={{
           y: selectionSpring,
           scale: selectionSpring,
+          opacity: { duration: 0.24, ease: "easeOut" },
           boxShadow: selectionSpring,
         }}
       >
@@ -128,11 +162,22 @@ const ExperienceCard = ({
             "radial-gradient(ellipse 80% 70% at 50% 38%, rgba(110,189,228,0.5) 0%, rgba(224,143,211,0.22) 42%, transparent 68%)",
         }}
         initial={false}
-        animate={{
-          opacity: isSelected ? 1 : 0,
-          scale: isSelected ? 1 : 0.88,
-        }}
-        transition={selectionSpring}
+        animate={
+          isPulsingGlow && !reduceMotion
+            ? {
+                opacity: 1,
+                scale: [glowRestScale, 1.22, 1.08],
+              }
+            : {
+                opacity: isSelected ? 1 : 0,
+                scale: isSelected ? 1.08 : 0.88,
+              }
+        }
+        transition={
+          isPulsingGlow && !reduceMotion
+            ? { duration: 0.15, ease: [0.45, 0, 0.55, 1] }
+            : selectionSpring
+        }
       />
       <svg className="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
         <defs>
@@ -175,7 +220,7 @@ const ExperienceCard = ({
               backgroundSize: "cover",
             }}
           />
-          <div className="absolute inset-0 bg-black/65" aria-hidden="true" />
+          {/* <div className="absolute inset-0 bg-black/65" aria-hidden="true" /> */}
           <div className="relative z-10 flex h-full min-h-0 flex-col justify-end">
             <div className="relative w-full min-w-0">
               <div
@@ -276,9 +321,9 @@ const ExperienceCard = ({
             animate={{
               pathLength: 1,
               opacity: 1,
-              strokeWidth: isSelected ? 3.85 : 3,
+              strokeWidth: isSelected ? 4.2 : 3,
               filter: isSelected
-                ? "drop-shadow(0 0 14px rgba(110,189,228,0.75)) drop-shadow(0 0 28px rgba(224,143,211,0.45))"
+                ? "drop-shadow(0 0 20px rgba(110,189,228,0.95)) drop-shadow(0 0 40px rgba(224,143,211,0.62))"
                 : "drop-shadow(0 0 8px rgba(110,189,228,0.35))",
             }}
             transition={

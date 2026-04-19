@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { HomeHeader } from "@/components/header";
 import { useGetQuery } from "@/hooks/useQuery";
 import { useAppSelector } from "@/store/hooks";
-import { selectIsAuthenticated } from "@/store/slices/authSlice";
+import { selectCurrentUser, selectIsAuthenticated } from "@/store/slices/authSlice";
 import { BannerData, ContentItem } from "@/services/bannerApi";
 import ExperienceCard from "@/components/cards/ExperienceCard";
 import { useSelectExperienceGroupMutation } from "@/hooks/useSelectExperienceGroupMutation";
@@ -21,6 +21,7 @@ import { Button, Skeleton } from "@mui/material";
 import { GoArrowRight } from "react-icons/go";
 import { useContentCategoryData } from "@/hooks/useBannerData";
 import { processCategoriesWithRecentFlags } from "@/utils/videoProcessing";
+import { playSelectionFeedback } from "@/utils/selectionFeedback";
 import Carousel from "@/components/Sliders/Carousel";
 import Loader from "@/components/UI/Loader";
 
@@ -48,6 +49,7 @@ interface TrailerItem {
 const SelectExperience = () => {
   const router = useRouter();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+   const user = useAppSelector(selectCurrentUser);
   const { mutate: submitExperienceGroup, isPending: isSubmittingExperience } =
     useSelectExperienceGroupMutation();
 
@@ -228,10 +230,12 @@ const SelectExperience = () => {
     ? "What do you need today"
     : "What do you need today";
 
-  const handleContinue = () => {
-    if (!selectedGroupId || isSubmittingExperience) return;
+  const handleContinue = (groupId?: string) => {
+    const targetGroupId = groupId ?? selectedGroupId;
+    if (!targetGroupId || isSubmittingExperience) return;
+    setSelectedGroupId(targetGroupId);
     submitExperienceGroup(
-      { groupId: selectedGroupId },
+      { groupId: targetGroupId },
       { onSuccess: () => router.push("/browse") },
     );
   };
@@ -291,7 +295,7 @@ const SelectExperience = () => {
 
         <div className="absolute inset-0 min-h-dvh bg-black/55" />
         <div className="absolute inset-0 min-h-dvh bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,rgba(0,0,0,0)_42%)]" />
-        <div className="absolute inset-0 min-h-dvh bg-gradient-to-b from-black/70 via-black/35 to-black" />
+    <div className="absolute inset-0 min-h-dvh bg-black/80 backdrop-blur-sm" />
       </div>
 
       <div className="relative z-10 w-full px-5 pb-20 pt-32 md:flex md:min-h-dvh md:items-center md:justify-center md:px-10 md:pb-16 md:pt-28">
@@ -300,6 +304,9 @@ const SelectExperience = () => {
            <div className="w-full ">
              <p className="text-center font-bold text-[#ccc]">Step 1 of 1</p>
            </div>
+          {
+            hasExistingSelection && <h1>Welcome back {user?.firstName}</h1>
+          }
             <h1 className="text-center text-[2rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[2.5rem] md:text-[3.6rem]">
               {pageTitle}
             </h1>
@@ -344,14 +351,16 @@ const SelectExperience = () => {
             ) : (
               availableExperiences?.data.map((experience, idx) => (
                 <ExperienceCard
-                onClick={handleContinue}
+                  onClick={handleContinue}
                   key={experience.id}
                   description={experience.description}
                   entranceIndex={idx}
                   groupId={experience.id}
+                  hasActiveSelection={Boolean(selectedGroupId)}
                   imageUrl={experience.icon ?? ""}
                   isSelected={selectedGroupId === experience.id}
                   title={experience.name}
+                  onSelectionFeedback={playSelectionFeedback}
                   onSelect={setSelectedGroupId}
                 />
               ))
