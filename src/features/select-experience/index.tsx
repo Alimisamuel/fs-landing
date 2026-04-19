@@ -321,41 +321,56 @@ const SelectExperience = () => {
 
       <div className="relative z-10 w-full px-5 pb-20 pt-32 md:flex md:min-h-dvh md:items-center md:justify-center md:px-10 md:pb-16 md:pt-28">
         <div className="w-full max-w-[1240px]">
-          <div className="mx-auto max-w-3xl">
-           <div className="w-full ">
-             <p className="text-center font-bold text-[#ccc]">Step 1 of 1</p>
-           </div>
-          {
-            hasExistingSelection && <h1>Welcome back {user?.firstName}</h1>
-          }
-            <h1 className="text-center text-[2rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[2.5rem] md:text-[3.6rem]">
-              {pageTitle}
-            </h1>
-            {hasExistingSelection ? (
-              <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-[#DCDCDC] sm:text-base md:mt-4 md:text-[1.06rem]">
-                {currentExperienceDisplayName ? (
-                  <>
-                    You&apos;re currently on{" "}
-                    <span className="font-medium text-white">
-                      {currentExperienceDisplayName}
-                    </span>
-                    {/* . Select another card to switch, then continue — or keep your
-                    current choice and return to browse. */}
-                  </>
+          <header className="mx-auto max-w-3xl text-center">
+            <div className="flex flex-col items-center gap-4 sm:gap-5 md:gap-6">
+              <p
+                className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:text-[11px]"
+                id="select-experience-step"
+              >
+                Step 1 of 1
+              </p>
+
+              {hasExistingSelection ? (
+                <p className="text-base font-medium leading-snug text-neutral-200 sm:text-lg">
+                  Welcome back
+                  {user?.firstName ? (
+                    <>
+                      ,{" "}
+                      <span className="font-semibold text-white">
+                        {user.firstName}
+                      </span>
+                    </>
+                  ) : null}
+                </p>
+              ) : null}
+
+              <div className="flex w-full flex-col items-center gap-3 sm:gap-4">
+                <h1 className="text-pretty text-[1.85rem] font-semibold leading-[1.08] tracking-[-0.02em] text-white sm:text-[2.4rem] sm:leading-[1.06] md:text-[3.25rem]">
+                  {pageTitle}
+                </h1>
+
+                {hasExistingSelection ? (
+                  <p className="mx-auto max-w-xl text-pretty text-sm leading-relaxed text-neutral-300 sm:text-base md:text-[1.0625rem]">
+                    {currentExperienceDisplayName ? (
+                      <>
+                        You&apos;re currently on{" "}
+                        <span className="font-medium text-white">
+                          {currentExperienceDisplayName}
+                        </span>
+                      </>
+                    ) : (
+                      "Choose an experience to begin."
+                    )}
+                  </p>
                 ) : (
-                  <>
-                   Choose an experience to begin.
-                  </>
+                  <p className="mx-auto max-w-lg text-pretty text-sm leading-relaxed text-neutral-300 sm:max-w-xl sm:text-base md:text-[1.0625rem]">
+                    FaithStream is a daily faith companion designed to support the
+                    rhythm of everyday spiritual life.
+                  </p>
                 )}
-              </p>
-            ) : (
-              <p className="mx-auto mt-3 text-center text-sm leading-relaxed text-[#DCDCDC] sm:text-base md:mt-4 md:text-[1.06rem]">
-                FaithStream is a daily faith companion designed to support the
-                rhythm of
-                <br className="hidden md:block" /> everyday spiritual life.
-              </p>
-            )}
-          </div>
+              </div>
+            </div>
+          </header>
 
           <div className="mx-auto mt-9 grid max-w-[820px] grid-cols-1 gap-7 sm:mt-10 sm:gap-8 md:mt-12 md:max-w-none md:grid-cols-3 md:gap-11">
             {gettingAvailableExperiences ? (
