@@ -1,44 +1,42 @@
-/** Subtle haptics on capable mobile browsers; otherwise a very soft click. */
+/** Subtle haptics on capable mobile browsers; otherwise first ~2s of selection clip. */
 
-let sharedAudioContext: AudioContext | null = null;
+const SELECTION_SOUND_SRC = "/sound/studiokolomna-sunrise-114326.mp3";
+const PLAY_DURATION_MS = 2000;
 
-function getAudioContext(): AudioContext | null {
-  if (typeof window === "undefined") return null;
-  const AC = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-  if (!AC) return null;
-  if (!sharedAudioContext) {
-    sharedAudioContext = new AC();
-  }
-  return sharedAudioContext;
-}
+let clipAudio: HTMLAudioElement | null = null;
+let clipStopTimeout: ReturnType<typeof setTimeout> | null = null;
 
-function playSoftClick(): void {
+function playSelectionClip(): void {
+  if (typeof window === "undefined") return;
+
   try {
-    const audioCtx = getAudioContext();
-    if (!audioCtx) return;
-    if (audioCtx.state === "suspended") {
-      void audioCtx.resume();
+    if (clipStopTimeout) {
+      clearTimeout(clipStopTimeout);
+      clipStopTimeout = null;
     }
 
-    const t = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+    if (!clipAudio) {
+      clipAudio = new Audio(SELECTION_SOUND_SRC);
+      clipAudio.preload = "auto";
+      clipAudio.volume = 0.22;
+    }
 
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(2200, t);
-    osc.frequency.exponentialRampToValueAtTime(900, t + 0.018);
+    clipAudio.pause();
+    clipAudio.currentTime = 0;
+    const playPromise = clipAudio.play();
+    if (playPromise !== undefined) {
+      void playPromise.catch(() => {});
+    }
 
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.exponentialRampToValueAtTime(0.022, t + 0.002);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start(t);
-    osc.stop(t + 0.045);
+    clipStopTimeout = setTimeout(() => {
+      if (clipAudio) {
+        clipAudio.pause();
+        clipAudio.currentTime = 0;
+      }
+      clipStopTimeout = null;
+    }, PLAY_DURATION_MS);
   } catch {
-    // Ignore missing/blocked audio
+    // Ignore blocked or missing audio
   }
 }
 
@@ -57,9 +55,9 @@ export function playSelectionFeedback(): void {
       navigator.vibrate(12);
       return;
     } catch {
-      // Fall through to synthesized click
+      // Fall through to clip
     }
   }
 
-  playSoftClick();
+  playSelectionClip();
 }

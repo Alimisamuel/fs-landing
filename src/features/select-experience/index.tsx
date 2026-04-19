@@ -46,6 +46,8 @@ interface TrailerItem {
   src: string;
 }
 
+const EXIT_SCREEN_FADE_MS = 2000;
+
 const SelectExperience = () => {
   const router = useRouter();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
@@ -65,6 +67,9 @@ const SelectExperience = () => {
     null,
   ]);
   const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exitFadeStartedAtRef = useRef<number | null>(null);
+
+  const [isExitFading, setIsExitFading] = useState(false);
 
   const [playlist, setPlaylist] = useState<TrailerItem[]>([]);
   const [visibleSlot, setVisibleSlot] = useState<0 | 1>(0);
@@ -234,9 +239,25 @@ const SelectExperience = () => {
     const targetGroupId = groupId ?? selectedGroupId;
     if (!targetGroupId || isSubmittingExperience) return;
     setSelectedGroupId(targetGroupId);
+    exitFadeStartedAtRef.current = Date.now();
+    setIsExitFading(true);
+
     submitExperienceGroup(
       { groupId: targetGroupId },
-      { onSuccess: () => router.push("/browse") },
+      {
+        onSuccess: () => {
+          const startedAt = exitFadeStartedAtRef.current ?? Date.now();
+          const elapsed = Date.now() - startedAt;
+          const waitMs = Math.max(0, EXIT_SCREEN_FADE_MS - elapsed);
+          setTimeout(() => {
+            router.push("/browse");
+          }, waitMs);
+        },
+        onError: () => {
+          setIsExitFading(false);
+          exitFadeStartedAtRef.current = null;
+        },
+      },
     );
   };
   const {
@@ -411,6 +432,14 @@ const SelectExperience = () => {
           </div>
         </div>
       </div>
+
+      <div
+        aria-hidden="true"
+        style={{ transitionDuration: `${EXIT_SCREEN_FADE_MS}ms` }}
+        className={`fixed inset-0 z-[1400] bg-black transition-opacity ease-out ${
+          isExitFading ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      />
     </div>
 
   );
