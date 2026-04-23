@@ -56,7 +56,7 @@ const HomeHeader = (props: Props) => {
   const [canScrollRight, setCanScrollRight] = useState(false);
   const navContainerRef = useRef<HTMLDivElement>(null);
 
-  const { isPending, categories } = useContentCategories();
+  const { isPending, categories, currentExperience } = useContentCategories();
 
   const listedNav = categories;
 
@@ -192,7 +192,7 @@ const HomeHeader = (props: Props) => {
                 >
                   <div className="flex-shrink-0">
                     <NavButton
-                      title={"Home"}
+                      title={currentExperience?.toLocaleUpperCase() || "Home"}
                       route={`/browse`}
                       selected={path === "/browse"}
                     />

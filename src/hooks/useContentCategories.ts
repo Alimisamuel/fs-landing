@@ -28,6 +28,7 @@ interface NavResponse {
   data:{
      experienceGroup:{
        contentTypes: ContentNav[]
+       name:string
      }
    }
    status:string;
@@ -42,11 +43,12 @@ export const useContentCategories = (slug?: string) => {
     isAuthenticated
   );
 
-  console.log("useContentCategories data:", data?.data?.experienceGroup
+  console.log("useContentCategories data:", data?.data
 );
 
   // all categories
-  const categories = data?.data?.experienceGroup?.contentTypes || [];;
+  const categories = data?.data?.experienceGroup?.contentTypes || [];
+  const currentExperience = data?.data?.experienceGroup?.name
 
   // single category by slug
   const selectedCategory = useMemo(() => {
@@ -64,5 +66,6 @@ export const useContentCategories = (slug?: string) => {
     categories, // all navs
     selectedCategory, // single object if slug provided
     refetch,
+    currentExperience
   };
 };
