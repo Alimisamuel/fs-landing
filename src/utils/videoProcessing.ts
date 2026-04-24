@@ -14,12 +14,15 @@ export const addRecentFlagToVideos = (
   allVideos: ContentItem[],
   categoryData: any[]
 ): VideoWithRecentFlag[] => {
+  const categories = Array.isArray(categoryData)
+    ? categoryData.filter(Boolean)
+    : [];
   // Find the "New on FaithStream" category and extract video IDs
-  const recentCategory = categoryData?.find(
-    (category: any) => 
-      category.categoryName === "New on FaithStream" || 
+  const recentCategory = categories.find(
+    (category: any) =>
+      category.categoryName === "New on FaithStream" ||
       category.categoryName === "New in FaithStream" ||
-      category.categoryName?.toLowerCase().includes("new")
+      category.categoryName?.toLowerCase().includes("new"),
   );
 
   const recentVideoIds = new Set(
@@ -51,12 +54,14 @@ export const processCategoriesWithRecentFlags = (
 ): any[] => {
   if (!categoryData) return [];
 
+  const categories = categoryData.filter(Boolean);
+
   // Find recent video IDs first
-  const recentCategory = categoryData.find(
-    (category: any) => 
-      category.categoryName === "New on FaithStream" || 
+  const recentCategory = categories.find(
+    (category: any) =>
+      category.categoryName === "New on FaithStream" ||
       category.categoryName === "New in FaithStream" ||
-      category.categoryName?.toLowerCase().includes("new")
+      category.categoryName?.toLowerCase().includes("new"),
   );
 
   const recentVideoIds = new Set(
@@ -64,7 +69,7 @@ export const processCategoriesWithRecentFlags = (
   );
 
   // Process all categories and mark videos
-  return categoryData.map((category: any) => ({
+  return categories.map((category: any) => ({
     ...category,
     videos: category.videos?.map((video: any) => ({
       ...video,

@@ -272,7 +272,7 @@ const SelectExperience = () => {
   );
 
   const Top10 = processedCategories?.filter(
-    (c: any) => c.categoryName === "TOP 10 in Nigeria",
+    (c: any) => c?.categoryName === "TOP 10 in Nigeria",
   );
 
   console.log("other_categories", Top10);
