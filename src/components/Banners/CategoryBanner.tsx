@@ -163,7 +163,7 @@ const CategoryBanner = ({ category }: { category: string }) => {
         )}
 
         {/* Purple Overlay */}
-        <div className="absolute top-0 left-0 w-screen aspect-video h-[70vh] md:h-auto bg-primary/80 mix-blend-multiply z-20 " />
+        {/* <div className="absolute top-0 left-0 w-screen aspect-video h-[70vh] md:h-auto bg-primary/80 mix-blend-multiply z-20 " /> */}
 
         <div className="absolute bottom-0 left-0 w-screen h-1/2 bg-gradient-to-t from-black to-transparent z-20 " />
 

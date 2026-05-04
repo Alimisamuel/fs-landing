@@ -63,7 +63,7 @@ const MovieCard: FC<CardProps> = ({
       });
     }, 500); // 500ms delay before showing popup
   };
-     const {  setSelectedMovie } = useMovieContext();
+  const { setSelectedMovie } = useMovieContext();
 
   const handleMouseLeave = () => {
     // Clear the timeout if mouse leaves before delay completes
@@ -83,27 +83,18 @@ const MovieCard: FC<CardProps> = ({
     };
   }, []);
 
-  const thumbnails = item?.thumbnailUrls?.length
-    ? item.thumbnailUrls
-    : item?.thumbnails?.length
-      ? item.thumbnails
-      : [];
-  const thumbnail =
-    thumbnails.length === 0
-      ? "/images/thumbnail_fallback.jpeg"
-      : thumbnails.length === 3
-        ? thumbnails[1]
-        : thumbnails[0];
-
   const { isMobile } = useBreakpoint();
+
+  const thumbnails = isMobile ? item?.mobileThumbnails : item?.thumbnailUrls;
+  const thumbnail =
+    thumbnails.length === 0 ? "/images/thumbnail_fallback.jpeg" : thumbnails[0];
+
   const router = useRouter();
 
   const handleMobileClick = (id: string) => {
     router.push(`/browse/content/${id}`);
-    setSelectedMovie(item)
+    setSelectedMovie(item);
   };
-
-
 
   return (
     <>

@@ -219,9 +219,9 @@ const HomeBanner = () => {
         )}
 
         {/* Purple Overlay */}
-        <div style={{height:isMobile ? "100vh" : "auto"}} className="absolute top-0 left-0 w-screen aspect-video bg-primary/80 mix-blend-multiply z-20 " />
+        {/* <div style={{height:isMobile ? "100vh" : "auto"}} className="absolute top-0 left-0 w-screen aspect-video bg-primary/80 mix-blend-multiply z-20 " /> */}
 
-        <div className="absolute bottom-0 left-0 w-screen h-1/2 bg-gradient-to-t from-black to-transparent z-20 " />
+        <div className="absolute bottom-0 left-0 w-screen h-[80%] bg-gradient-to-t from-black to-transparent z-20 " />
 
         {/* Foreground Content */}
 

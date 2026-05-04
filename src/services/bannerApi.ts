@@ -131,6 +131,7 @@ export interface ContentItem {
   transcoding: TranscodingJob[];
   contentTypeId:string
   seasons:Season[]
+  mobileThumbnails: string[];
 }
 
 export interface Content {

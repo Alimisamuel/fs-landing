@@ -99,10 +99,10 @@ const PopUpCard: FC<PopUpCardProps> = ({ isHovered, x, y }) => {
   useEffect(() => {
     if (cardState.item) {
       setImageUrl(
-  cardState?.item?.thumbnailUrls?.[0] ??
-  cardState?.item?.thumbnails?.[0] ??
-  ""
-);
+        cardState?.item?.thumbnailUrls?.[0] ??
+          cardState?.item?.thumbnails?.[0] ??
+          "",
+      );
 
       // setTitle(cardState.item.title || "MOVIE");
       setMovieId(cardState?.item.id ?? 0);
@@ -173,7 +173,7 @@ const PopUpCard: FC<PopUpCardProps> = ({ isHovered, x, y }) => {
     >
       <div className="relative w-full h-[170px] bg-gradient-to-b from-primary/50 to-black overflow-hidden ">
         <div className="pointer-events-none w-full h-full">
-          <div className="absolute top-0 left-0 w-screen h-full bg-primary/80 mix-blend-multiply z-20 " />
+          {/* <div className="absolute top-0 left-0 w-screen h-full bg-primary/80 mix-blend-multiply z-20 " /> */}
           {cardState?.item?.trailerUrls?.[0] && (
             <video
               autoPlay
@@ -207,34 +207,32 @@ const PopUpCard: FC<PopUpCardProps> = ({ isHovered, x, y }) => {
       </div>
       <div className="flex justify-between items-center p-4 bg-[#141414]">
         <div className="flex space-x-2">
-          {
-            hasSeasons ? (
-              <div
-             onClick={() => {
-            setModalOpen(true);
-            setSelectedMovie(favData as ContentItem);
-            setCardState({
-              ...cardState,
-              isHovered: false,
-              cardId: null,
-              item: null,
-            });
-          }}
-            className="rounded-full bg-white transition-colors duration-200 flex flex-row items-center cursor-pointer justify-center h-[46px] w-[46px]"
-          >
-            <IoIosPlay size={20} className="h-6 w-6 text-[#141414]" />
-          </div>
-            ):(
-              <Link
-            href={`/watch/${cardState?.item?.id || ""}?title=${
-              cardState.item?.title
-            }&progress=${cardState?.item?.lastPositionSeconds}`}
-            className="rounded-full bg-white transition-colors duration-200 flex flex-row items-center justify-center h-[46px] w-[46px]"
-          >
-            <IoIosPlay size={20} className="h-6 w-6 text-[#141414]" />
-          </Link>
-            )
-          }
+          {hasSeasons ? (
+            <div
+              onClick={() => {
+                setModalOpen(true);
+                setSelectedMovie(favData as ContentItem);
+                setCardState({
+                  ...cardState,
+                  isHovered: false,
+                  cardId: null,
+                  item: null,
+                });
+              }}
+              className="rounded-full bg-white transition-colors duration-200 flex flex-row items-center cursor-pointer justify-center h-[46px] w-[46px]"
+            >
+              <IoIosPlay size={20} className="h-6 w-6 text-[#141414]" />
+            </div>
+          ) : (
+            <Link
+              href={`/watch/${cardState?.item?.id || ""}?title=${
+                cardState.item?.title
+              }&progress=${cardState?.item?.lastPositionSeconds}`}
+              className="rounded-full bg-white transition-colors duration-200 flex flex-row items-center justify-center h-[46px] w-[46px]"
+            >
+              <IoIosPlay size={20} className="h-6 w-6 text-[#141414]" />
+            </Link>
+          )}
 
           <button
             className="rounded-full transition-colors
@@ -294,13 +292,11 @@ const PopUpCard: FC<PopUpCardProps> = ({ isHovered, x, y }) => {
               {formatEpisodeDuration(cardState?.item?.durationSeconds)}
             </span>
           )}
-          {
-            hasSeasons && (
-              <span className="text-[#BCBCBC] text-[12px] ">
+          {hasSeasons && (
+            <span className="text-[#BCBCBC] text-[12px] ">
               {seasonList?.length} Season
             </span>
-            )
-          }
+          )}
         </div>
         <div className="mt-2 text-sm flex space-x-2 mb-2 capitalize">
           <span>{cardState?.item?.keywords?.join(" • ")}</span>
