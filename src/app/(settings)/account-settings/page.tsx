@@ -26,6 +26,47 @@ const Account = () => {
   };
 
   const user = useAppSelector(selectCurrentUser);
+          //  <Autocomplete
+          //           disablePortal
+          //           options={otherCurrencyOptions}
+          //           value={
+          //             quickCurrencyCodes.includes(currency)
+          //               ? null
+          //               : selectedCurrency
+          //           }
+          //           getOptionLabel={(option) => option.name}
+          //           loading={isDetectingCurrency}
+          //           onChange={(_, next) => {
+          //             if (!next) return;
+          //             setCurrency(next, { manual: true });
+          //           }}
+          //           renderOption={(props, option) => (
+          //             <li {...props}>
+          //               <span className="mr-3 text-[16px] font-[800] text-primary">
+          //                 {option.symbol}
+          //               </span>
+          //               {option.name}
+          //             </li>
+          //           )}
+          //           renderInput={(params) => (
+          //             <TextField
+          //               {...params}
+          //               placeholder={
+          //                 isDetectingCurrency
+          //                   ? "Detecting your currency..."
+          //                   : "Choose from other currencies"
+          //               }
+          //               InputProps={{
+          //                 ...params.InputProps,
+          //                 sx: {
+          //                   borderRadius: "10px",
+          //                   bgcolor: "#fff",
+          //                   fontSize: "13px",
+          //                 },
+          //               }}
+          //             />
+          //           )}
+          //         />
 
 
   const [userInfo, setUserInfo] = useState<UserTypes>({
