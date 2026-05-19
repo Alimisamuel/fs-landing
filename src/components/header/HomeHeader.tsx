@@ -28,11 +28,12 @@ import { useGetQuery } from "@/hooks/useQuery";
 import { useContentCategories } from "@/hooks/useContentCategories";
 import useBreakpoint from "@/hooks/useBreakpoints";
 import MobileSidebar from "./MobileSidebar";
+import DonationSticker from "./donnation-sticker";
 
 interface Props {
   window?: () => Window;
   children?: React.ReactElement<unknown>;
-  hideNav?:boolean
+  hideNav?: boolean;
 }
 
 function HideOnScroll(props: Props) {
@@ -59,6 +60,9 @@ const HomeHeader = (props: Props) => {
   const { isPending, categories, currentExperience } = useContentCategories();
 
   const listedNav = categories;
+  const visibleNavItems = listedNav.filter(
+    (nav: any) => nav.slug !== "Faith-Sounds",
+  );
 
   // Check if navigation needs scroll buttons
   const checkScrollButtons = () => {
@@ -122,17 +126,50 @@ const HomeHeader = (props: Props) => {
 
   const [openModal, setOpenModal] = useState(false);
   const [openMobileNav, setOpenMobileNav] = useState(false);
+  const [donationStickerVisible, setDonationStickerVisible] = useState(true);
   const { isMobile } = useBreakpoint();
 
+  const handleDismissDonationSticker = React.useCallback(() => {
+    setDonationStickerVisible(false);
+  }, []);
+
+  const handleOpenDonationModal = React.useCallback(() => {
+    setOpenModal(true);
+  }, []);
+
+  const donationStickerHeight = 50;
+
   return (
-    <AppBar
-      className={`${isMobile ? "appbar_bg" : color ? "appbar_bg" : "appbar"} w-full py-6`}
-      sx={{ width: "100%", background: "transparent", boxShadow: "none" }}
+    <>
+      {donationStickerVisible && (
+        <motion.div
+          className="fixed inset-x-0 top-0 isolate z-[1600]"
+          style={{ height: donationStickerHeight }}
+        >
+          <DonationSticker
+            onGive={handleOpenDonationModal}
+            onDismiss={handleDismissDonationSticker}
+          />
+        </motion.div>
+      )}
+      <AppBar
+      className={`${isMobile ? "appbar_bg" : color ? "appbar_bg" : "appbar"} w-full `}
+      sx={{
+        width: "100%",
+        background: "transparent",
+        boxShadow: "none",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        zIndex: 1300,
+        top: donationStickerVisible ? donationStickerHeight : 0,
+      }}
     >
       <Box
         sx={{
           margin: "0 auto",
           width: { xl: "90vw", lg: "90vw", md: "90vw", xs: "95vw" },
+          my:3
         }}
       >
         <div className="flex items-center justify-between gap-x-5">
@@ -159,7 +196,7 @@ const HomeHeader = (props: Props) => {
             </Link>
 
             {/* Navigation Buttons */}
-            {(!isMobile && !props.hideNav ) && (
+            {!isMobile && !props.hideNav && (
               <div className="relative flex items-center ml-3">
                 {/* Left scroll button */}
                 {showScrollButton && canScrollLeft && (
@@ -216,7 +253,7 @@ const HomeHeader = (props: Props) => {
                           />
                         </motion.div>
                       ))
-                    : listedNav.map((nav: any, idx: any) => (
+                    : visibleNavItems.map((nav: any, idx: any) => (
                         <motion.div
                           key={idx}
                           initial={{ opacity: 0, x: -10 }}
@@ -233,21 +270,19 @@ const HomeHeader = (props: Props) => {
                           />
                         </motion.div>
                       ))}
-                      <motion.div
-                          key={10}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 * 10 }}
-                          className="flex-shrink-0"
-                        >
-                          <NavButton
-                            title={"My List"}
-                            route={`/my-list`}
-                            selected={
-                              decodeURIComponent(path) === `/my-list`
-                            }
-                          />
-                        </motion.div>
+                  <motion.div
+                    key={10}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * 10 }}
+                    className="flex-shrink-0"
+                  >
+                    <NavButton
+                      title={"My List"}
+                      route={`/my-list`}
+                      selected={decodeURIComponent(path) === `/my-list`}
+                    />
+                  </motion.div>
                 </div>
 
                 {/* Right scroll button */}
@@ -310,9 +345,10 @@ const HomeHeader = (props: Props) => {
       <MobileSidebar
         open={openMobileNav}
         onClose={() => setOpenMobileNav(false)}
-        navItems={listedNav}
+        navItems={visibleNavItems}
       />
     </AppBar>
+    </>
   );
 };
 

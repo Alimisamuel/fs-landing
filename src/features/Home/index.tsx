@@ -53,7 +53,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (isMobile) {
-      setOpen(true)
+      setOpen(true);
     } else {
       setOpen(false);
     }
@@ -193,7 +193,10 @@ const HomePage = () => {
         >
           <div className="">
             <div className="grid place-content-center mb-2">
-              <IconButton   onClick={() => setOpen(false)} sx={{ bgcolor: "#fff" }}>
+              <IconButton
+                onClick={() => setOpen(false)}
+                sx={{ bgcolor: "#fff" }}
+              >
                 <IoMdClose className="text-black" />
               </IconButton>
             </div>
@@ -213,7 +216,7 @@ const HomePage = () => {
                 and a better shopping experience.
               </p>
 
-              <div className="grid place-content-center">
+              <div className="flex flex-col justify-center items-center gap-y-5">
                 <a href="https://play.google.com/store/apps/details?id=com.faithstream.faith_stream">
                   <Button sx={{}}>
                     <Image
@@ -222,6 +225,31 @@ const HomePage = () => {
                       width={130}
                       height={50}
                     />
+                  </Button>
+                </a>
+                <a href="https://apps.apple.com/ng/app/faith-stream/id6754464093">
+                  <Button
+                    sx={{
+                      color: "#000",
+                      border: "1px solid #333",
+                      bgcolor: "000",
+                    }}
+                  >
+                    <svg
+                      className="w-10 h-10"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                    </svg>
+                    <div className="flex flex-col items-start">
+                      <span className="text-xs opacity-90 text-white">
+                        Download on the
+                      </span>
+                      <span className="text-md font-black -mt-0.5 text-white">
+                        App Store
+                      </span>
+                    </div>
                   </Button>
                 </a>
               </div>

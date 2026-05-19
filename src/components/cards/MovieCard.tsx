@@ -85,7 +85,8 @@ const MovieCard: FC<CardProps> = ({
 
   const { isMobile } = useBreakpoint();
 
-  const thumbnails = isMobile ? item?.mobileThumbnails : item?.thumbnailUrls;
+  const thumbnails =
+    (isMobile ? item?.mobileThumbnails : item?.thumbnailUrls) ?? [];
   const thumbnail =
     thumbnails.length === 0 ? "/images/thumbnail_fallback.jpeg" : thumbnails[0];
 

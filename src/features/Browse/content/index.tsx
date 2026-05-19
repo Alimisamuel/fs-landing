@@ -406,12 +406,12 @@ const ContentOverview = () => {
                       {movieData?.keywords?.join(", ")}
                     </span>
                   </p>
-                  <p className="text-xs mt-1">
+                  {/* <p className="text-xs mt-1">
                     <span className="font-[300] text-[#777777] text-xs">
                       Maturity rating: &nbsp;
                     </span>
                     {movieData.ageRating}
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>
